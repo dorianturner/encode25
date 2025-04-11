@@ -162,16 +162,15 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background-color: #e5e7eb;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            color: var(--gray-700);
+            padding: 1px
         }
         
-        .asset-name {
-            font-weight: 600;
+        .asset-symbol {
+            font-size: 0.85rem;
+            color: var(--gray-700);
         }
         
         .asset-amount {
@@ -286,7 +285,9 @@
                     <div class="portfolio-list">
                         <div class="portfolio-item">
                             <div class="asset-info">
-                                <div class="asset-icon">ETH</div>
+                                <div class="asset-icon">
+                                    <img src="static/images/ethereum-eth-logo-diamond-purple.svg"/>
+                                </div>
                                 <div>
                                     <div class="asset-name">Ethereum</div>
                                     <div class="asset-symbol">ETH</div>
@@ -297,7 +298,9 @@
                         
                         <div class="portfolio-item">
                             <div class="asset-info">
-                                <div class="asset-icon">USDC</div>
+                                <div class="asset-icon">
+                                    <img src="static/images/usd-coin-usdc-logo.svg"/>
+                                </div>
                                 <div>
                                     <div class="asset-name">USD Coin</div>
                                     <div class="asset-symbol">USDC</div>
@@ -308,7 +311,9 @@
                         
                         <div class="portfolio-item">
                             <div class="asset-info">
-                                <div class="asset-icon">DAI</div>
+                                <div class="asset-icon">
+                                    <img src="static/images/multi-collateral-dai-dai-logo.svg"/>
+                                </div>
                                 <div>
                                     <div class="asset-name">Dai</div>
                                     <div class="asset-symbol">DAI</div>
@@ -328,7 +333,7 @@
                         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
                         <line x1="12" y1="17" x2="12.01" y2="17"></line>
                     </svg>
-                    <input type="text" value="What's my risk level on protocol X?" id="question-input">
+                    <input type="text" placeholder="What's my risk level on protocol X?" id="question-input">
                 </div>
                 
                 <div class="assistant-section">
