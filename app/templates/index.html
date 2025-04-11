@@ -20,68 +20,8 @@
         </header>
         
         <div class="dashboard">
-            <div class="card">
-                <h2>Ethereum Address</h2>
-                <form id="ethereum-form" action="/submit_address" method="post">
-                    <div class="input-wrapper">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                        </svg>
-                        <input type="text" name="ethereum_address" placeholder="Enter your Ethereum address" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-
-                <div class="portfolio">
-                    <div class="portfolio-header">
-                        <h2>Portfolio</h2>
-                        <div class="portfolio-value">Total: $3,050.00</div>
-                    </div>
-                    
-                    <div class="portfolio-list">
-                        <div class="portfolio-item">
-                            <div class="asset-info">
-                                <div class="asset-icon">
-                                    <img src="static/images/ethereum-eth-logo-diamond-purple.svg" alt="ETH">
-                                </div>
-                                <div>
-                                    <div class="asset-name">Ethereum</div>
-                                    <div class="asset-symbol">ETH</div>
-                                </div>
-                            </div>
-                            <div class="asset-amount">1.25 ETH</div>
-                        </div>
-                        
-                        <div class="portfolio-item">
-                            <div class="asset-info">
-                                <div class="asset-icon">
-                                    <img src="static/images/usd-coin-usdc-logo.svg" alt="USDC">
-                                </div>
-                                <div>
-                                    <div class="asset-name">USD Coin</div>
-                                    <div class="asset-symbol">USDC</div>
-                                </div>
-                            </div>
-                            <div class="asset-amount">500.00 USDC</div>
-                        </div>
-                        
-                        <div class="portfolio-item">
-                            <div class="asset-info">
-                                <div class="asset-icon">
-                                    <img src="static/images/multi-collateral-dai-dai-logo.svg" alt="DAI">
-                                </div>
-                                <div>
-                                    <div class="asset-name">Dai</div>
-                                    <div class="asset-symbol">DAI</div>
-                                </div>
-                            </div>
-                            <div class="asset-amount">300.00 DAI</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
+            <!-- Question/Chat section (Left side) -->
+            <div class="card chat-section">
                 <h2>Ask a question:</h2>
                 <div class="input-wrapper">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -111,6 +51,106 @@
                         <div style="margin-top: 16px; display: flex; gap: 8px;">
                             <button class="btn btn-primary">Show Recommendations</button>
                             <button class="btn">Learn more</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right side column -->
+            <div class="right-column">
+                <!-- Graph placeholder (Top right) -->
+                <div class="card graph-section">
+                    <h2>Portfolio Analytics</h2>
+                    <div class="graph-placeholder">
+                        <div class="graph-header">
+                            <div class="graph-title">Performance Overview</div>
+                            <div class="graph-timeframe">
+                                <button class="btn btn-timeframe active">1D</button>
+                                <button class="btn btn-timeframe">1W</button>
+                                <button class="btn btn-timeframe">1M</button>
+                                <button class="btn btn-timeframe">1Y</button>
+                                <button class="btn btn-timeframe">All</button>
+                            </div>
+                        </div>
+                        <div class="graph-content">
+                            <div class="chart-placeholder">
+                                <svg width="100%" height="200" viewBox="0 0 500 200">
+                                    <path d="M0,150 C100,100 200,180 300,80 C400,30 500,70 500,100" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                                    <path d="M0,150 C100,100 200,180 300,80 C400,30 500,70 500,100 L500,200 L0,200 Z" fill="url(#gradient)" opacity="0.2"/>
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:var(--primary);stop-opacity:0" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="chart-value-indicator">
+                                    <div class="value-amount">+12.4%</div>
+                                    <div class="value-period">Past month</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ethereum Address form (Bottom right) -->
+                <div class="card wallet-section">
+                    <h2>Ethereum Address</h2>
+                    <form id="ethereum-form" action="/submit_address" method="post">
+                        <div class="input-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                            <input type="text" name="ethereum_address" placeholder="Enter your Ethereum address" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+
+                    <div class="portfolio hidden">
+                        <div class="portfolio-header">
+                            <h2>Portfolio</h2>
+                            <div class="portfolio-value">Total: $3,050.00</div>
+                        </div>
+                        
+                        <div class="portfolio-list">
+                            <div class="portfolio-item">
+                                <div class="asset-info">
+                                    <div class="asset-icon">
+                                        <img src="static/images/ethereum-eth-logo-diamond-purple.svg" alt="ETH">
+                                    </div>
+                                    <div>
+                                        <div class="asset-name">Ethereum</div>
+                                        <div class="asset-symbol">ETH</div>
+                                    </div>
+                                </div>
+                                <div class="asset-amount">1.25 ETH</div>
+                            </div>
+                            
+                            <div class="portfolio-item">
+                                <div class="asset-info">
+                                    <div class="asset-icon">
+                                        <img src="static/images/usd-coin-usdc-logo.svg" alt="USDC">
+                                    </div>
+                                    <div>
+                                        <div class="asset-name">USD Coin</div>
+                                        <div class="asset-symbol">USDC</div>
+                                    </div>
+                                </div>
+                                <div class="asset-amount">500.00 USDC</div>
+                            </div>
+                            
+                            <div class="portfolio-item">
+                                <div class="asset-info">
+                                    <div class="asset-icon">
+                                        <img src="static/images/multi-collateral-dai-dai-logo.svg" alt="DAI">
+                                    </div>
+                                    <div>
+                                        <div class="asset-name">Dai</div>
+                                        <div class="asset-symbol">DAI</div>
+                                    </div>
+                                </div>
+                                <div class="asset-amount">300.00 DAI</div>
+                            </div>
                         </div>
                     </div>
                 </div>
