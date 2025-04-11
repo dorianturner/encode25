@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Display the response exactly as received from backend
             answerBox.innerHTML = `
-                ${data.badge_text ? `<div class="badge">${data.badge_text}</div>` : ''}
+                ${data.badge_text ? `<div class="badge badge-warning">${data.badge_text}</div>` : ''}
                 <div class="answer-text">${data.text}</div>
                 ${data.buttons ? `
                     <div class="button-group">
