@@ -74,7 +74,7 @@ class WalletQuery:
 
 
     def fetch_web3_history(self):
-        API_KEY = "44UC4DPSTC296FKCM5CRI6D6C36YVMAN6R"  # Get free key from etherscan.io
+        API_KEY = os.getenv('ETHER_SCAN')
 
         url = f"{self.etherscan_api}module=account&action=txlist&address={self.wallet_address}&startblock=0&endblock=99999999&sort=asc&apikey={API_KEY}"
     

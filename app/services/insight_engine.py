@@ -62,30 +62,41 @@ async def analyze_wallet(wallet_query: wallet_fetcher.WalletQuery, callback=None
         text = json.dumps(data, indent=2)
         return text[:max_chars] + ("\n...[truncated]" if len(text) > max_chars else "")
 
+    print(summarize(wallet_transaction_history[-50:]))
     prompt = f"""
     **Wallet Summary**:
     {summarize(wallet_summary)}
     
     **Recent Transactions** (last 5):
-    {summarize(wallet_transaction_history[-50:])}
+    {', '.join([f'{t["hash"]} ({t["block_number"]})' for t in wallet_transaction_history[-50:]])}
     
     **External Data**:
     {summarize(external_data)}
     
+
     **Question**: {wallet_query.question}
+    Take into account the following:
+    - the given external data
+    - the recent transactions
+    - the wallet summary
+    - the tokens in the wallet (recommend what other tokens it should invest in)
+    TAKE into account past transactions and the current market trends.
+    - Provide a detailed analysis of the wallet's performance and suggest improvements.
+    Do not output the ETH balance or the market values, 
+    but mention gas fees and the transaction history. 
     """
     
     # Retry logic with exponential backoff
     retries = 3
     delay = 5
-    
-    for attempt in range(retries):
-        try:
+
+    try:
             stream = await client.chat.completions.create(
                 model="gpt-4o-mini",  # Use latest optimized model
                 messages=[{"role": "user", "content": prompt}],
-                max_tokens=500,
+                max_tokens=1000,
                 stream= True,  # Enable streaming
+                temperature=0.7,  # Adjust as needed
             )
             
             result = ""
@@ -98,8 +109,8 @@ async def analyze_wallet(wallet_query: wallet_fetcher.WalletQuery, callback=None
             return {"response": result.strip()}
 
 
-        except Exception as e:
-            print(f"Attempt {attempt+1} failed: {str(e)}")
+    except Exception as e:
+            print(f"Attempt failed: {str(e)}")
             await asyncio.sleep(delay)
             delay *= 2
     
