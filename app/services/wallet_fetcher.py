@@ -15,7 +15,7 @@ def fetch_web3_data():
     if web3.is_address(user_input):
         # Fetch balance for an Ethereum address
         balance = web3.eth.get_balance(user_input)
-        print(f"Balance of {user_input}: {web3.fromWei(balance, 'ether')} ETH")
+        print(f"Balance of {user_input}: {web3.from_wei(balance, 'ether')} ETH")
     elif web3.isHex(user_input) and len(user_input) == 66:
         # Fetch transaction details for a transaction hash
         try:
