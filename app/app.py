@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 from services.wallet_fetcher import WalletQuery, TOKEN_ADDRESSES
 import json
+from services.tokens import tokens
 
 app = Flask(__name__)
 
@@ -16,7 +17,7 @@ def submit_address():
         return jsonify({"error": "No Ethereum address provided"}), 400
     
     # Default to these common tokens
-    tokens = ["USDC", "DAI", "USDT", "WETH"]
+    # tokens = ["USDC", "DAI", "USDT", "WETH"]
     
     # Create WalletQuery instance
     wallet = WalletQuery(ethereum_address, tokens=tokens)

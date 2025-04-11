@@ -2,13 +2,33 @@ import requests
 from web3 import Web3
 import json
 import os
+from tokens import tokens
+from tqdm import tqdm
+
 
 # List of common ERC-20 tokens and their contract addresses
 TOKEN_ADDRESSES = json.load(open(f"{os.path.dirname(__file__)}/tokens.json"))
 
+ERC20_ABI = [
+    {
+        "constant": True,
+        "inputs": [{"name": "_owner", "type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"name": "balance", "type": "uint256"}],
+        "type": "function"
+    },
+    {
+        "constant": True,
+        "inputs": [],
+        "name": "decimals",
+        "outputs": [{"name": "", "type": "uint8"}],
+        "type": "function"
+    }
+]
+
 # takes in wallet address, question? and list of tokens addresses
 class WalletQuery:
-    def __init__(self, wallet_address: str, tokens = None, question: str = "",debug: bool = False):
+    def __init__(self, wallet_address: str, tokens = [], question: str = "",debug: bool = False):
         self.wallet_address = wallet_address
         self.question = question
         
@@ -19,9 +39,8 @@ class WalletQuery:
             self.etherscan_api = "https://api.etherscan.io/api?"
             self.infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
 
-        self.tokens = tokens if tokens else []
+        self.tokens = tokens
         self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
-
 
     def fetch_web3_data(self):
         if not self.web3.is_connected():
@@ -41,7 +60,10 @@ class WalletQuery:
 
             # Fetch balances for each ERC-20 token
             token_balances = {}
-            for token_name in self.tokens:
+
+            tokens = [t for t in self.tokens if t in TOKEN_ADDRESSES]
+            
+            for token_name in tqdm(tokens):
                 if token_name not in TOKEN_ADDRESSES:
                     print(f"Token {token_name} is not in the predefined list.")
                     continue
@@ -50,11 +72,11 @@ class WalletQuery:
                 token_balance = self.get_erc20_balance(self.web3, self.wallet_address, token_address)
 
                 if token_balance:
-                    print(type(token_balance))
                     token_balances[token_address] = token_balance
 
             if token_balances: 
                 response["ERC-20 Token Balances"] = token_balances
+            print(response)
 
             return json.dumps(response,indent=2)
         
@@ -92,27 +114,10 @@ class WalletQuery:
         
     def get_erc20_balance(self, web3, wallet_address, token_address):
         # ERC-20 ABI snippet required for balanceOf and decimals
-        erc20_abi = [
-            {
-                "constant": True,
-                "inputs": [{"name": "_owner", "type": "address"}],
-                "name": "balanceOf",
-                "outputs": [{"name": "balance", "type": "uint256"}],
-                "type": "function"
-            },
-            {
-                "constant": True,
-                "inputs": [],
-                "name": "decimals",
-                "outputs": [{"name": "", "type": "uint8"}],
-                "type": "function"
-            }
-        ]
-
         try:
             token_address = Web3.to_checksum_address(token_address)
             wallet_address = Web3.to_checksum_address(wallet_address)
-            contract = web3.eth.contract(address=token_address, abi=erc20_abi)
+            contract = web3.eth.contract(address=token_address, abi=ERC20_ABI)
 
             balance = contract.functions.balanceOf(wallet_address).call()
             decimals = contract.functions.decimals().call()
@@ -126,8 +131,8 @@ class WalletQuery:
 if __name__ == "__main__":
     # address = "0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE"
     address = "0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97"
-    WalletQuery = WalletQuery(address)
+    WalletQuery = WalletQuery(address, tokens = tokens)
  
     print(WalletQuery.fetch_web3_data())
 
-    print(WalletQuery.fetch_web3_history())
+    # print(WalletQuery.fetch_web3_history())
