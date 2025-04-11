@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const portfolioList = document.querySelector('.portfolio-list');
     const portfolioValue = document.querySelector('.portfolio-value');
 
+    // Ethereum form handling
     if (ethereumForm) {
         ethereumForm.addEventListener('submit', function(e) {
             e.preventDefault();
