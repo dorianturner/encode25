@@ -29,7 +29,7 @@ def fetch_web3_data():
 
 def fetch_wallet_data(wallet_address):
     # Connect to an Ethereum node (replace with your node URL)
-    infura_url = "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID"
+    infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
     web3 = Web3(Web3.HTTPProvider(infura_url))
 
     if not web3.isConnected():
