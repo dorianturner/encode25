@@ -194,77 +194,54 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
-    // Handle AI Assistant questions
-    const questionInput = document.getElementById('question-input');
-    const answerBox = document.getElementById('answer-box');
-
-    if (questionInput) {
-        questionInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const question = questionInput.value;
-                const address = sessionStorage.getItem('current_address');
-
-                // Show loading state
-                answerBox.innerHTML = `
-                    <div class="loading">
-                        <div class="spinner"></div>
+    // Handle question submission
+    document.getElementById('question-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const questionInput = document.getElementById('question-input');
+        const answerBox = document.getElementById('answer-box');
+        const question = questionInput.value.trim();
+        
+        if (!question) return;
+        
+        // Show loading state
+        answerBox.innerHTML = '<div class="loading-spinner"></div>';
+        
+        try {
+            // Send to backend
+            const response = await fetch('/ask_question', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: question,
+                    address: sessionStorage.getItem('current_address') || ''
+                })
+            });
+            
+            if (!response.ok) throw new Error('Request failed');
+            
+            const data = await response.json();
+            
+            // Display the response exactly as received from backend
+            answerBox.innerHTML = `
+                ${data.badge_text ? `<div class="badge">${data.badge_text}</div>` : ''}
+                <div class="answer-text">${data.text}</div>
+                ${data.buttons ? `
+                    <div class="button-group">
+                        ${data.buttons.map(btn => 
+                            `<button class="btn btn-${btn.type}">${btn.text}</button>`
+                        ).join('')}
                     </div>
-                `;
-
-                // Create form data to send to backend
-                const formData = new FormData();
-                formData.append('question', question);
-                if (address) {
-                    formData.append('address', address);
-                }
-
-                // Send to backend
-                fetch('/ask_question', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // Format the answer
-                    let answerHTML = '';
-
-                    if (data.badge) {
-                        answerHTML += `<span class="badge ${data.badge}">${data.badge_text}</span>`;
-                    }
-
-                    answerHTML += data.text;
-
-                    if (data.buttons && data.buttons.length > 0) {
-                        answerHTML += `<div style="margin-top: 16px; display: flex; gap: 8px;">`;
-
-                        data.buttons.forEach(button => {
-                            const buttonClass = button.type === 'primary' ? 'btn btn-primary' : 'btn';
-                            answerHTML += `<button class="${buttonClass}">${button.text}</button>`;
-                        });
-
-                        answerHTML += `</div>`;
-                    }
-
-                    answerBox.innerHTML = answerHTML;
-
-                    // Add event listeners to the new buttons
-                    document.querySelectorAll('.btn').forEach(button => {
-                        button.addEventListener('click', function() {
-                            alert('This is a demo interface. This button would normally trigger an action in the actual application.');
-                        });
-                    });
-                })
-                .catch(error => {
-                    answerBox.innerHTML = `
-                        <div style="color: var(--danger);">
-                            Sorry, I couldn't process your question. Please try again.
-                        </div>
-                    `;
-                    console.error('Error:', error);
-                });
-            }
-        });
-    }
+                ` : ''}
+            `;
+            
+        } catch (error) {
+            answerBox.innerHTML = '<div class="error">Failed to get response. Please try again.</div>';
+            console.error('Error:', error);
+        }
+    });
 
     // Add global TOKEN_ADDRESSES for use in the JavaScript
     const TOKEN_ADDRESSES = {
