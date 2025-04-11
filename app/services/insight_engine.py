@@ -6,22 +6,26 @@ import os
 import wallet_fetcher
 import json
 import data_sources
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # api keys
-openai.api_key = "random_key"
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 tokens = ["USDT", "USDC", "DAI"]
 
 # sample wallet summary
 wallet = wallet_fetcher.WalletQuery(
-    wallet_address="0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97",
+    wallet_address="0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE",
     tokens=tokens,
     question="What should I do with my wallet?",
     debug=True
 )
 
-externalData = data_sources.fetch_all_data("44UC4DPSTC296FKCM5CRI6D6C36YVMAN6R", tokens=tokens)
+externalData = data_sources.fetch_all_data(os.getenv("ETHER_KEY"), tokens=tokens)
 
 
 #@app.post("/analyze")
