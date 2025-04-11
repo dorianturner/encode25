@@ -29,18 +29,19 @@ def fetch_web3_data(eth_addr: str):
     else:
         print("Invalid input. Please enter a valid Ethereum address or transaction hash.")
 
-def fetch_wallet_data(wallet_address):
-    # Connect to an Ethereum node (replace with your node URL)
-    infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
-    web3 = Web3(Web3.HTTPProvider(infura_url))
+# if we are working with an actual wallet address, we can uncomment the following code
+# def fetch_wallet_data(wallet_address):
+#     # Connect to an Ethereum node (replace with your node URL)
+#     infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
+#     web3 = Web3(Web3.HTTPProvider(infura_url))
 
-    if not web3.isConnected():
-        print("Failed to connect to the Ethereum network.")
-        return
+#     if not web3.isConnected():
+#         print("Failed to connect to the Ethereum network.")
+#         return
 
-    # Fetch balance for the wallet address
-    balance = web3.eth.get_balance(wallet_address)
-    return web3.from_wei(balance, 'ether')
+#     # Fetch balance for the wallet address
+#     balance = web3.eth.get_balance(wallet_address)
+#     return web3.from_wei(balance, 'ether')
 
 if __name__ == "__main__":
     fetch_web3_data("0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE")
