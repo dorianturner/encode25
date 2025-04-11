@@ -5,29 +5,31 @@ import openai
 import os
 import wallet_fetcher
 import json
+import data_sources
 
 # api keys
-openai.api_key = "secret-key"
+openai.api_key = "random_key"
 
-#app = FastAPI()
+
+tokens = ["USDT", "USDC", "DAI"]
 
 # sample wallet summary
 wallet = wallet_fetcher.WalletQuery(
-    wallet_address="0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE",
-    tokens=["USDT", "USDC", "DAI"],
-    question="What is the current balance of my wallet?",
+    wallet_address="0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97",
+    tokens=tokens,
+    question="What should I do with my wallet?",
     debug=True
 )
 
+externalData = data_sources.fetch_all_data("44UC4DPSTC296FKCM5CRI6D6C36YVMAN6R", tokens=tokens)
 
 
-# will have wallet class as a parameter
 #@app.post("/analyze")
 def analyze_wallet(wallet_query: wallet_fetcher.WalletQuery):
-    #wallet_data = fetch_web3_data(wallet_query.wallet_address)
-    #wallet_json = json.dumps(wallet_data, indent=2)
+
 
     wallet_summary = wallet.fetch_web3_data()
+    wallet_transaction_history = wallet.fetch_web3_history()
     wallet_text = json.dumps(wallet_summary, indent=2)
 
 
@@ -36,11 +38,17 @@ def analyze_wallet(wallet_query: wallet_fetcher.WalletQuery):
     The following is the wallet data:
     {wallet_text}
 
+    The following is transaction history:
+    {wallet_transaction_history}
+
+    The following is the external data:
+    {externalData}
+
     User question: {wallet.question}
     Provide a clear, concise, and actionable answer.
     """
 
-    response = openai.chat.completions.create(  # ✅ Correct endpoint
+    response = openai.chat.completions.create(  
     model="gpt-4",
     messages=[{
         "role": "user",
@@ -54,6 +62,5 @@ def analyze_wallet(wallet_query: wallet_fetcher.WalletQuery):
 
 
 if __name__ == "__main__":
-    # uvicorn.run(app,host="0.0.0.0", port=8000, log_level="info")
     print("Starting the FastAPI server...")
     print(analyze_wallet(wallet)["response"])
