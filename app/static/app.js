@@ -1,4 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Adjust portfolio height dynamically based on content
+    function adjustPortfolioHeight() {
+        const portfolioList = document.querySelector('.portfolio-list');
+        const portfolioSection = document.querySelector('.portfolio');
+        const walletSection = document.querySelector('.wallet-section');
+        
+        if (!portfolioList || !portfolioSection || !walletSection) return;
+        
+        // Get the available height for the portfolio list
+        const walletHeight = walletSection.clientHeight;
+        const formHeight = document.getElementById('ethereum-form')?.clientHeight || 0;
+        const portfolioHeaderHeight = document.querySelector('.portfolio-header')?.clientHeight || 0;
+        const padding = 28 * 2; // Card padding (top and bottom)
+        
+        // Calculate maximum height for portfolio list
+        const maxHeight = walletHeight - formHeight - portfolioHeaderHeight - padding - 16; // 16px extra for margin
+        
+        // Set max-height for scrolling
+        portfolioList.style.maxHeight = `${Math.max(100, maxHeight)}px`;
+    }
+
     // Theme toggle functionality
     const htmlElement = document.documentElement;
     const themeToggle = document.getElementById('theme-toggle');
@@ -191,6 +212,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }, 100);
         
+        // Adjust portfolio height before showing
+        adjustPortfolioHeight();
+        
         // Remove hidden class first
         portfolioSection.classList.remove('hidden');
         
@@ -310,11 +334,9 @@ document.addEventListener('DOMContentLoaded', function() {
         "AAVE":"0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
     };
 
-    // Initialize buttons
-    // document.querySelectorAll('.btn').forEach(button => {
-    //     button.addEventListener('click', function() {
-    //         alert('This is a demo interface. This button would normally trigger an action in the actual application.');
-    //     });
-    // });
-});
+    // Add event listener for window resize to adjust heights
+    window.addEventListener('resize', adjustPortfolioHeight);
 
+    // Call adjustPortfolioHeight on page load
+    window.addEventListener('load', adjustPortfolioHeight);
+});
