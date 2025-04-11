@@ -2,7 +2,8 @@ from web3 import Web3
 
 def fetch_web3_data(eth_addr: str):
     # Connect to an Ethereum node (replace with your node URL)
-    infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
+    # infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
+    infura_url = "https://ethereum-sepolia-rpc.publicnode.com" # Eth. Sepolia Test Network
     web3 = Web3(Web3.HTTPProvider(infura_url))
 
     if not web3.is_connected():
