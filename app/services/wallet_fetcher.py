@@ -55,7 +55,7 @@ class WalletQuery:
                 token_balance = self.get_erc20_balance(self.web3, self.wallet_address, token_address)
                 token_balances[token_address] = token_balance
 
-            if token_balances:
+            if token_balances: 
                 response["ERC-20 Token Balances"] = token_balances
 
             return json.dumps(response,indent=2)
@@ -91,12 +91,42 @@ class WalletQuery:
         except Exception as e:
             print(f"API request failed: {e}")
             return []
+        
+    def get_erc20_balance(self, web3, wallet_address, token_address):
+        # ERC-20 ABI snippet required for balanceOf and decimals
+        erc20_abi = [
+            {
+                "constant": True,
+                "inputs": [{"name": "_owner", "type": "address"}],
+                "name": "balanceOf",
+                "outputs": [{"name": "balance", "type": "uint256"}],
+                "type": "function"
+            },
+            {
+                "constant": True,
+                "inputs": [],
+                "name": "decimals",
+                "outputs": [{"name": "", "type": "uint8"}],
+                "type": "function"
+            }
+        ]
+
+        try:
+            contract = web3.eth.contract(address=token_address, abi=erc20_abi)
+            balance = contract.functions.balanceOf(wallet_address).call()
+            decimals = contract.functions.decimals().call()
+            return float(balance) / (10 ** decimals)
+        except Exception as e:
+            print(f"Error fetching token balance: {e}")
+            return 0.0
+
 
 
 
 if __name__ == "__main__":
-    address = "0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE"
-    WalletQuery = WalletQuery(address, debug=True)
+    # address = "0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE"
+    address = "0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97"
+    WalletQuery = WalletQuery(address)
  
     print(WalletQuery.fetch_web3_data())
 
