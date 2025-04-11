@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const ethereumForm = document.getElementById('ethereum-form');
     const portfolioList = document.querySelector('.portfolio-list');
     const portfolioValue = document.querySelector('.portfolio-value');
+    const portfolioSection = document.querySelector('.portfolio'); 
 
     // Ethereum form handling
     if (ethereumForm) {
@@ -90,6 +91,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 updatePortfolio(data.wallet);
+                portfolioSection.classList.remove('hidden');
 
                 // Store the current address in session storage for use with questions
                 sessionStorage.setItem('current_address', address);
@@ -270,9 +272,9 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Initialize buttons
-    document.querySelectorAll('.btn').forEach(button => {
-        button.addEventListener('click', function() {
-            alert('This is a demo interface. This button would normally trigger an action in the actual application.');
-        });
-    });
+    // document.querySelectorAll('.btn').forEach(button => {
+    //     button.addEventListener('click', function() {
+    //         alert('This is a demo interface. This button would normally trigger an action in the actual application.');
+    //     });
+    // });
 });

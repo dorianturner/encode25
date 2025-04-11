@@ -334,3 +334,7 @@ input[type="text"]:focus {
         align-self: flex-end;
     }
 }
+
+.hidden {
+    display: none;
+}
