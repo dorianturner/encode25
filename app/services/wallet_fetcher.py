@@ -1,6 +1,6 @@
 from web3 import Web3
 
-def fetch_web3_data():
+def fetch_web3_data(eth_addr: str):
     # Connect to an Ethereum node (replace with your node URL)
     infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
     web3 = Web3(Web3.HTTPProvider(infura_url))
@@ -10,12 +10,13 @@ def fetch_web3_data():
         return
 
     # Get user input
-    user_input = input("Enter Ethereum address or transaction hash: ").strip()
+    # user_input = input("Enter Ethereum address or transaction hash: ").strip()
+    user_input = eth_addr
 
     if web3.is_address(user_input):
         # Fetch balance for an Ethereum address
         balance = web3.eth.get_balance(user_input)
-        print(f"Balance of {user_input}: {web3.fromWei(balance, 'ether')} ETH")
+        print(f"Balance of {user_input}: {web3.from_wei(balance, 'ether')} ETH")
     elif web3.isHex(user_input) and len(user_input) == 66:
         # Fetch transaction details for a transaction hash
         try:
@@ -38,7 +39,7 @@ def fetch_wallet_data(wallet_address):
 
     # Fetch balance for the wallet address
     balance = web3.eth.get_balance(wallet_address)
-    return web3.fromWei(balance, 'ether')
+    return web3.from_wei(balance, 'ether')
 
 if __name__ == "__main__":
-    fetch_web3_data()
+    fetch_web3_data("0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE")
