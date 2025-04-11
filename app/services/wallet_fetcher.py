@@ -3,7 +3,7 @@ from web3 import Web3
 def fetch_web3_data(eth_addr: str, debug = False):
     # Connect to an Ethereum node (replace with your node URL)
     infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
-    
+
     if debug:
         infura_url = "https://ethereum-sepolia-rpc.publicnode.com"
 
