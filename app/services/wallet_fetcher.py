@@ -76,7 +76,6 @@ class WalletQuery:
 
             if token_balances: 
                 response["ERC-20 Token Balances"] = token_balances
-                print(response)
 
             return json.dumps(response,indent=2)
         
