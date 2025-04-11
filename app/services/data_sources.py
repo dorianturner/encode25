@@ -1,4 +1,5 @@
 import requests
+import json
 
 def fetch_current_market_values(tokens=None):
     if tokens is None:
@@ -12,7 +13,7 @@ def fetch_current_market_values(tokens=None):
         price_list = [(symbol, prices.get(cg_id, {}).get("usd")) 
                       for symbol, cg_id in tokens.items() 
                       if prices.get(cg_id, {}).get("usd") is not None]
-        return sorted(price_list, key=lambda x: x[1])
+        return json.dumps(sorted(price_list, key=lambda x: x[1]), indent=2)
     except requests.RequestException as e:
         return f"Failed to fetch market data: {e}"
 
@@ -22,13 +23,7 @@ def fetch_gas_oracle(api_key):
         data = requests.get(url).json()
         if data.get("status") == "1":
             result = data["result"]
-            return {
-                "safe": float(result["SafeGasPrice"]),       
-                "proposed": float(result["ProposeGasPrice"]),  
-                "fast": float(result["FastGasPrice"]),         
-                "base_fee": float(result["suggestBaseFee"]),   
-                "gas_used_ratio": result["gasUsedRatio"]
-            }
+            return json.dumps(result, indent=2)
         return f"Error: {data.get('message')}"
     except requests.RequestException as e:
         return f"Failed to fetch gas prices: {e}"
