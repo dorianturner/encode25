@@ -57,12 +57,58 @@ document.addEventListener('DOMContentLoaded', function() {
             updateThemeIcon('light');
         }
     });
+
+    // Handle Question Submission
+    const questionForm = document.querySelector('#question-form');
+    questionForm.addEventListener('submit', function(e) {
+        e.preventDefault(); // This is crucial to prevent page reload
+        
+        const question = questionInput.value.trim().toLowerCase();
+        if (!question) return;
+
+        answerBox.innerHTML = '<p>Loading...</p>';
+
+        fetch('/ask_question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                question: question,
+                address: '' // Add if needed
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`Error: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            answerBox.innerHTML = `
+                <span class="badge ${data.badge_text ? 'badge-warning' : ''}">
+                    ${data.badge_text || ''}
+                </span>
+                <p>${data.text}</p>
+                <div style="margin-top: 16px; display: flex; gap: 8px;">
+                    ${data.buttons.map(button => 
+                        `<button class="btn btn-${button.type}">${button.text}</button>`
+                    ).join('')}
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            answerBox.innerHTML = `
+                <p class="error-message">There was an error processing your request.</p>
+            `;
+        });
+    });
     
     // Handle Ethereum address form submission
     const ethereumForm = document.getElementById('ethereum-form');
     const portfolioList = document.querySelector('.portfolio-list');
     const portfolioValue = document.querySelector('.portfolio-value');
     
+    // Ethereum form handling
     if (ethereumForm) {
         ethereumForm.addEventListener('submit', function(e) {
             e.preventDefault();
