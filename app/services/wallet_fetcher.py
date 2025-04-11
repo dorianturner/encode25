@@ -4,11 +4,28 @@ import json
 
 # List of common ERC-20 tokens and their contract addresses
 TOKEN_ADDRESSES = {
-    "USDC": "0xA0b86991C6218B36c1d19D4a2e9eb0ce3606eB48",
-    "DAI": "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-    "USDT": "0x55d398326f99059fF775485246999027B3197955",
-    "WETH": "0xC02aaA39b223FE8D0A0E5C4F27EAD9083C756Cc2",
-    # Add more token names and their addresses as needed
+    "USDT":"0xdac17f958d2ee523a2206206994597c13d831ec7",
+    "USDC":"0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    "BUSD":"0x4fabb145d64652a948d72533023f6e7a623c7c53",
+    "SHIB":"0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce",
+    "DAI":"0x6b175474e89094c44da98b954eedeac495271d0f",
+    "MATIC":"0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0",
+    "STETH":"0xae7ab96520de3a18e5e111b5eaab095312d7fe84",
+    "UNI":"0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+    "WBTC":"0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",
+    "OKB":"0x75231f58b43240c9718dd58b4967c5114342a86c",
+    "LEO":"0x2af5d2ad76741191d15dfe7bf6ac92d4bd912ca3",
+    "LINK":"0x514910771af9ca656af840dff83e8264ecf986ca",
+    "CRO":"0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b",
+    "QNT":"0x4a220e6096b25eadb88358cb44068a3248254675",
+    "APE":"0x4d224452801aced8b2f0aebe155379bb5d594381",
+    "XCN":"0xa2cd3d43c775978a96bdbf12d733d5a1ed94fb18",
+    "FRAX":"0x853d955acef822db058eb8505911ed77f175b99e",
+    "SAND":"0x3845badade8e6dff049820680d1f14bd3903a5d0",
+    "MANA":"0x0f5d2fb29fb7d3cfee444a200298f468908cc942",
+    "AXS":"0xbb0e17ef65f82ab018d8edd776e8dd940327b28b",
+    "CHZ":"0x3506424f91fd33084466f402d5d97f05f8e3b4af",
+    "AAVE":"0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9"
 }
 
 # takes in wallet address, question? and list of tokens addresses
@@ -53,10 +70,13 @@ class WalletQuery:
                 # Fetch token balance using the token address
                 token_address = TOKEN_ADDRESSES[token_name]
                 token_balance = self.get_erc20_balance(self.web3, self.wallet_address, token_address)
-                token_balances[token_address] = token_balance
+
+                if token_balance:
+                    token_balances[token_address] = token_balance
 
             if token_balances: 
                 response["ERC-20 Token Balances"] = token_balances
+                print(response)
 
             return json.dumps(response,indent=2)
         
@@ -112,16 +132,18 @@ class WalletQuery:
         ]
 
         try:
+            token_address = Web3.to_checksum_address(token_address)
+            wallet_address = Web3.to_checksum_address(wallet_address)
             contract = web3.eth.contract(address=token_address, abi=erc20_abi)
+
             balance = contract.functions.balanceOf(wallet_address).call()
             decimals = contract.functions.decimals().call()
+
             return float(balance) / (10 ** decimals)
+
         except Exception as e:
-            print(f"Error fetching token balance: {e}")
+            print(f"[Error] Could not fetch balance for {token_address}: {e}")
             return 0.0
-
-
-
 
 if __name__ == "__main__":
     # address = "0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE"

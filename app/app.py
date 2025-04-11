@@ -24,7 +24,6 @@ def submit_address():
     try:
         # Fetch wallet balance data
         wallet_data = wallet.fetch_web3_data()
-        print(wallet_data)
         
         # Parse the JSON string back to a dictionary
         if wallet_data:
@@ -33,19 +32,9 @@ def submit_address():
             wallet_data = {"error": "No data found"}
             
         # Fetch transaction history (limit to recent transactions)
-        history_data = wallet.fetch_web3_history()
-        if history_data:
-            history_data = json.loads(history_data)
-            # Limit to 10 most recent transactions
-            if "transactions" in history_data and len(history_data["transactions"]) > 10:
-                history_data["transactions"] = history_data["transactions"][-10:]
-        else:
-            history_data = {"error": "No transaction history found"}
-        
         # Combine data
         response_data = {
             "wallet": wallet_data,
-            "history": history_data
         }
         
         return jsonify(response_data)
