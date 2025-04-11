@@ -21,13 +21,16 @@ class WalletQuery:
         if web3.is_address(eth_addr):
             # Fetch balance for an Ethereum address
             balance = web3.eth.get_balance(eth_addr)
-            print(f"Balance of {eth_addr}: {web3.from_wei(balance, 'ether')} ETH")
+            return {web3.from_wei(balance, 'ether')} 
         elif len(eth_addr) == 66:
             # Fetch transaction details for a transaction hash
             try:
                 transaction = web3.eth.get_transaction(eth_addr)
-                print(f"Transaction details for {eth_addr}:")
-                print(transaction)
+                if transaction is None:
+                    print("Transaction not found.")
+                    return
+                # Fetch transaction receipt
+                return(transaction)
             except Exception as e:
                 print(f"Error fetching transaction: {e}")
         else:
@@ -79,7 +82,7 @@ if __name__ == "__main__":
     address = "0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE"
     WalletQuery = WalletQuery(address, "What is the current balance of my wallet?")
  
-    WalletQuery.fetch_web3_data(address, debug=True)
+    print(WalletQuery.fetch_web3_data(address, debug=True))
 
    
     print(WalletQuery.fetch_web3_history(address, debug=True))
