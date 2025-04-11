@@ -2,7 +2,7 @@ import requests
 from web3 import Web3
 import json
 import os
-from tokens import tokens
+from .tokens import tokens
 from tqdm import tqdm
 
 
