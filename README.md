@@ -1,3 +1,2 @@
-# encode25
-
-yay
+# Quickstart
+To access our app, please follow this url.
