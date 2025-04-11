@@ -338,3 +338,59 @@ input[type="text"]:focus {
 .hidden {
     display: none;
 }
+
+.portfolio {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    max-height: 0;
+    overflow: hidden;
+}
+
+.portfolio.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 1000px; /* Adjust based on your needs */
+    transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), max-height 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Add staggered animation to portfolio items */
+.portfolio-item {
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out, background-color 0.2s;
+}
+
+.portfolio.revealed .portfolio-item {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Stagger the item animations */
+.portfolio.revealed .portfolio-item:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.portfolio.revealed .portfolio-item:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.portfolio.revealed .portfolio-item:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+.portfolio.revealed .portfolio-item:nth-child(4) {
+    transition-delay: 0.4s;
+}
+
+/* Add pulsing effect to portfolio value during reveal */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.portfolio.revealed .portfolio-value {
+    animation: pulse 1s ease-in-out;
+}
+
