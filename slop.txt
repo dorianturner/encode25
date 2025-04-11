@@ -1,0 +1,17 @@
+defi_ai_wallet/
+├── app/
+│   ├── __init__.py         # Initialize Flask app
+│   ├── routes.py           # Define API endpoints
+│   ├── services/
+│   │   ├── wallet_fetcher.py   # Code to fetch on-chain data
+│   │   ├── insight_engine.py   # Use OpenAI for insights
+│   │   └── data_sources.py     # Fetch off-chain data (e.g., price info)
+│   ├── utils/
+│   │   └── eth_utils.py        # Helper functions for Ethereum
+│   └── config.py           # App settings (read .env variables)
+├── static/
+├── templates/
+├── requirements.txt
+├── run.py                 # Entry point for Flask app
+├── .env
+└── README.md
