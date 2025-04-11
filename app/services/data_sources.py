@@ -10,7 +10,11 @@ def fetch_current_market_values(tokens: dict = None):
                        e.g. {"ETH": "ethereum", "USDC": "usd-coin"}
     """
     if tokens is None:
-        tokens = {"ETH": "ethereum", "USDC": "usd-coin"}
+        tokens = {
+          "ETH": "ethereum", 
+          "USDC": "usd-coin",
+          "BTC": "bitcoin"
+        }
     
     # Prepare parameters for the CoinGecko API
     url = "https://api.coingecko.com/api/v3/simple/price"
