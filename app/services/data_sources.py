@@ -1,43 +1,73 @@
 import requests
 
-def fetch_current_market_values(tokens: dict = None):
-    """
-    Fetch and print the current market values in USD for specified tokens.
-    
-    Args:
-        tokens (dict): A mapping of token symbols to CoinGecko IDs. 
-                       Defaults to Ethereum (ETH) and USDC.
-                       e.g. {"ETH": "ethereum", "USDC": "usd-coin"}
-    """
+def fetch_current_market_values(tokens=None):
     if tokens is None:
-        tokens = {
-          "ETH": "ethereum", 
-          "USDC": "usd-coin",
-          "BTC": "bitcoin"
-        }
-    
-    # Prepare parameters for the CoinGecko API
+        tokens = {"ETH": "ethereum", "USDC": "usd-coin"}
     url = "https://api.coingecko.com/api/v3/simple/price"
-    ids = ",".join(tokens.values())
-    params = {
-        "ids": ids,
-        "vs_currencies": "usd"
-    }
-    
+    params = {"ids": ",".join(tokens.values()), "vs_currencies": "usd"}
     try:
         response = requests.get(url, params=params)
         response.raise_for_status()
         prices = response.json()
-
-        # Print token market values in order of importance (as defined in tokens dict)
-        for symbol, cg_id in tokens.items():
-            usd_price = prices.get(cg_id, {}).get("usd")
-            if usd_price is not None:
-                print(f"Current market value of {symbol}: ${usd_price}")
-            else:
-                print(f"Price data for {symbol} is unavailable.")
+        price_list = [(symbol, prices.get(cg_id, {}).get("usd")) 
+                      for symbol, cg_id in tokens.items() 
+                      if prices.get(cg_id, {}).get("usd") is not None]
+        return sorted(price_list, key=lambda x: x[1])
     except requests.RequestException as e:
-        print(f"Failed to fetch market data: {e}")
+        return f"Failed to fetch market data: {e}"
+
+def fetch_gas_oracle(api_key):
+    url = f"https://api.etherscan.io/v2/api?chainid=1&module=gastracker&action=gasoracle&apikey={api_key}"
+    try:
+        data = requests.get(url).json()
+        if data.get("status") == "1":
+            result = data["result"]
+            return {
+                "safe": float(result["SafeGasPrice"]),       
+                "proposed": float(result["ProposeGasPrice"]),  
+                "fast": float(result["FastGasPrice"]),         
+                "base_fee": float(result["suggestBaseFee"]),   
+                "gas_used_ratio": result["gasUsedRatio"]
+            }
+        return f"Error: {data.get('message')}"
+    except requests.RequestException as e:
+        return f"Failed to fetch gas prices: {e}"
+
+
+def estimate_transaction_time(api_key, gas_price_wei):
+    url = f"https://api.etherscan.io/v2/api?chainid=1&module=gastracker&action=gasestimate&gasprice={gas_price_wei}&apikey={api_key}"
+    try:
+        data = requests.get(url).json()
+        if data.get("status") == "1":
+            return data.get("result", "Unavailable")
+        return f"Error: {data.get('message')}"
+    except requests.RequestException as e:
+        return f"Failed to fetch gas estimate: {e}"
+
 
 if __name__ == "__main__":
-    fetch_current_market_values()
+    etherscan_api_key = "44UC4DPSTC296FKCM5CRI6D6C36YVMAN6R"
+
+    market_values = fetch_current_market_values()
+    print("Market Values:")
+    if isinstance(market_values, list):
+        for symbol, price in market_values:
+            print(f"{symbol}: ${price:.2f}")
+    else:
+        print(market_values)
+
+    gas_data = fetch_gas_oracle(etherscan_api_key)
+    print("\nGas Oracle Data:")
+    if isinstance(gas_data, dict):
+        for key, value in gas_data.items():
+            unit = " Gwei" if key != "gas_used_ratio" else ""
+            print(f"{key.capitalize()}: {value}{unit}")
+    else:
+        print(gas_data)
+
+    if isinstance(gas_data, dict):
+        proposed_gas_wei = int(gas_data["proposed"] * 1e9)
+        estimated_time = estimate_transaction_time(etherscan_api_key, proposed_gas_wei)
+        print(f"\nEstimated confirmation time for {gas_data['proposed']} Gwei: {estimated_time} seconds")
+    else:
+        print("\nGas oracle data unavailable; cannot estimate transaction time.")
