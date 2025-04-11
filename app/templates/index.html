@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.1">
     <title>AI-Powered DeFi Assistant</title>
     <style>
         :root {
@@ -22,6 +22,34 @@
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
         }
         
+        .light {
+            --bg-color: var(--gray-50);
+            --card-bg: white;
+            --text-color: var(--gray-800);
+            --text-muted: var(--gray-700);
+            --input-bg: var(--gray-50);
+            --input-border: #e5e7eb;
+            --hover-bg: var(--gray-50);
+            --portfolio-border: #e5e7eb;
+            --btn-bg: white;
+            --btn-border: #e5e7eb;
+            --btn-hover: var(--gray-100);
+        }
+        
+        .dark {
+            --bg-color: #111827;
+            --card-bg: #1f2937;
+            --text-color: #f9fafb;
+            --text-muted: #d1d5db;
+            --input-bg: #374151;
+            --input-border: #4b5563;
+            --hover-bg: #2d3748;
+            --portfolio-border: #374151;
+            --btn-bg: #374151;
+            --btn-border: #4b5563;
+            --btn-hover: #4b5563;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -30,26 +58,54 @@
         
         body {
             font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
-            background-color: var(--gray-50);
-            color: var(--gray-800);
+            background-color: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.5;
+            transition: all 0.3s ease;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 90%;
             margin: 0 auto;
             padding: 24px;
         }
         
         header {
             padding: 32px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         h1 {
             font-size: 2.75rem;
             font-weight: 800;
-            color: var(--dark);
+            color: var(--text-color);
             letter-spacing: -0.025em;
+        }
+        
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .theme-toggle-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle-icon:hover {
+            transform: scale(1.1);
         }
         
         .dashboard {
@@ -60,7 +116,7 @@
         }
         
         .card {
-            background: white;
+            background: var(--card-bg);
             border-radius: var(--radius);
             padding: 28px;
             box-shadow: var(--shadow);
@@ -76,7 +132,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 20px;
-            color: var(--gray-800);
+            color: var(--text-color);
         }
         
         .input-wrapper {
@@ -89,17 +145,18 @@
             left: 12px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--gray-700);
+            color: var(--text-muted);
         }
         
         input[type="text"] {
             width: 100%;
             padding: 16px 16px 16px 42px;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--input-border);
             border-radius: var(--radius);
             font-size: 1rem;
             transition: all 0.2s;
-            background-color: var(--gray-50);
+            background-color: var(--input-bg);
+            color: var(--text-color);
         }
         
         input[type="text"]:focus {
@@ -125,9 +182,9 @@
         
         .portfolio-value {
             font-size: 0.875rem;
-            color: var(--gray-700);
+            color: var(--text-muted);
             padding: 4px 12px;
-            background-color: var(--gray-100);
+            background-color: var(--input-bg);
             border-radius: 20px;
         }
         
@@ -140,7 +197,7 @@
             display: flex;
             justify-content: space-between;
             padding: 16px;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid var(--portfolio-border);
             transition: background-color 0.2s;
         }
         
@@ -149,7 +206,7 @@
         }
         
         .portfolio-item:hover {
-            background-color: var(--gray-50);
+            background-color: var(--hover-bg);
         }
         
         .asset-info {
@@ -165,21 +222,25 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1px
+            padding: 1px;
+        }
+        
+        .asset-name {
+            color: var(--text-color);
         }
         
         .asset-symbol {
             font-size: 0.85rem;
-            color: var(--gray-700);
+            color: var(--text-muted);
         }
         
         .asset-amount {
-            color: var(--gray-800);
+            color: var(--text-color);
             font-weight: 600;
         }
         
         .question-box {
-            background: var(--gray-100);
+            background: var(--input-bg);
             border-radius: var(--radius);
             padding: 16px;
             margin-top: 24px;
@@ -209,7 +270,7 @@
         }
         
         .answer-box {
-            background: white;
+            background: var(--card-bg);
             border-left: 4px solid var(--primary);
             border-radius: 0 var(--radius) var(--radius) 0;
             padding: 20px;
@@ -236,17 +297,18 @@
         
         .btn {
             padding: 8px 16px;
-            background-color: white;
-            border: 1px solid #e5e7eb;
+            background-color: var(--btn-bg);
+            border: 1px solid var(--btn-border);
             border-radius: var(--radius);
             cursor: pointer;
             font-size: 0.875rem;
             font-weight: 500;
             transition: all 0.2s;
+            color: var(--text-color);
         }
         
         .btn:hover {
-            background-color: var(--gray-100);
+            background-color: var(--btn-hover);
         }
         
         .btn-primary {
@@ -258,12 +320,40 @@
         .btn-primary:hover {
             background-color: var(--primary-light);
         }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .theme-toggle {
+                align-self: flex-end;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <h1>AI-Powered DeFi Assistant</h1>
+            <div class="theme-toggle" id="theme-toggle">
+                <div class="theme-toggle-icon" id="theme-toggle-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </div>
+            </div>
         </header>
         
         <div class="dashboard">
@@ -286,7 +376,7 @@
                         <div class="portfolio-item">
                             <div class="asset-info">
                                 <div class="asset-icon">
-                                    <img src="static/images/ethereum-eth-logo-diamond-purple.svg"/>
+                                    <img src="static/images/ethereum-eth-logo-diamond-purple.svg" alt="ETH">
                                 </div>
                                 <div>
                                     <div class="asset-name">Ethereum</div>
@@ -299,7 +389,7 @@
                         <div class="portfolio-item">
                             <div class="asset-info">
                                 <div class="asset-icon">
-                                    <img src="static/images/usd-coin-usdc-logo.svg"/>
+                                    <img src="static/images/usd-coin-usdc-logo.svg" alt="USDC">
                                 </div>
                                 <div>
                                     <div class="asset-name">USD Coin</div>
@@ -312,7 +402,7 @@
                         <div class="portfolio-item">
                             <div class="asset-info">
                                 <div class="asset-icon">
-                                    <img src="static/images/multi-collateral-dai-dai-logo.svg"/>
+                                    <img src="static/images/multi-collateral-dai-dai-logo.svg" alt="DAI">
                                 </div>
                                 <div>
                                     <div class="asset-name">Dai</div>
@@ -361,9 +451,57 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeToggleIcon = document.getElementById('theme-toggle-icon');
             const questionInput = document.getElementById('question-input');
             const answerBox = document.getElementById('answer-box');
             
+            // Check for saved theme preference or default to 'light'
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            html.className = savedTheme;
+            updateThemeToggleIcon(savedTheme);
+            
+            // Theme toggle functionality
+            themeToggle.addEventListener('click', function() {
+                if (html.classList.contains('light')) {
+                    html.classList.remove('light');
+                    html.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    updateThemeToggleIcon('dark');
+                } else {
+                    html.classList.remove('dark');
+                    html.classList.add('light');
+                    localStorage.setItem('theme', 'light');
+                    updateThemeToggleIcon('light');
+                }
+            });
+            
+            function updateThemeToggleIcon(theme) {
+                if (theme === 'dark') {
+                    themeToggleIcon.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    `;
+                } else {
+                    themeToggleIcon.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    `;
+                }
+            }
+            
+            // Question handling
             questionInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     const question = questionInput.value.toLowerCase();
