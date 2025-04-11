@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 updatePortfolio(data.wallet);
                 portfolioSection.classList.remove('hidden');
+                portfolioSection.classList.add('revealed');
 
                 // Store the current address in session storage for use with questions
                 sessionStorage.setItem('current_address', address);
@@ -103,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+   // Updated portfolio reveal functionality
     function updatePortfolio(walletData) {
         if (!walletData || walletData.error) {
             showError('No wallet data available.');
@@ -180,7 +182,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Update the DOM
         portfolioList.innerHTML = portfolioHTML;
-        portfolioValue.textContent = `Total: $${totalValue.toFixed(2)}`;
+        
+        // For smoother animation, update the text after a brief delay
+        setTimeout(() => {
+            // Use a counter animation for the total value
+            animateCounter(0, totalValue, 1500, value => {
+                portfolioValue.textContent = `Total: $${value.toFixed(2)}`;
+            });
+        }, 100);
+        
+        // Remove hidden class first
+        portfolioSection.classList.remove('hidden');
+        
+        // Force a reflow before adding the revealed class
+        void portfolioSection.offsetWidth;
+        
+        // Then add revealed class to trigger animation
+        portfolioSection.classList.add('revealed');
+    }
+
+    // Counter animation function
+    function animateCounter(start, end, duration, callback) {
+        const startTime = performance.now();
+        
+        function update(currentTime) {
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / duration, 1);
+            // Use easeOutExpo for smoother animation
+            const easing = 1 - Math.pow(2, -10 * progress);
+            const currentValue = start + (end - start) * easing;
+            
+            callback(currentValue);
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+        
+        requestAnimationFrame(update);
     }
 
     function showError(message) {
@@ -278,3 +317,4 @@ document.addEventListener('DOMContentLoaded', function() {
     //     });
     // });
 });
+
