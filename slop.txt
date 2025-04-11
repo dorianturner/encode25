@@ -1,6 +1,6 @@
 defi_ai_wallet/
 ├── app/
-│   ├── __init__.py         # Initialize Flask app
+│   ├── __init__.py         # Initialize FastAPI app
 │   ├── routes.py           # Define API endpoints
 │   ├── services/
 │   │   ├── wallet_fetcher.py   # Code to fetch on-chain data
@@ -12,6 +12,6 @@ defi_ai_wallet/
 ├── static/
 ├── templates/
 ├── requirements.txt
-├── run.py                 # Entry point for Flask app
+├── run.py                 # Entry point for FastAPI app
 ├── .env
 └── README.md
