@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 .secrets
+metadata.json
 
 # Distribution / packaging
 .Python
