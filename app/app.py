@@ -1,6 +1,5 @@
 from urllib.request import Request
 from services import wallet_fetcher
-from services.insight_engine import analyze_wallet_stream
 from flask import Flask, render_template, request, jsonify
 from fastapi.responses import StreamingResponse
 from services.wallet_fetcher import WalletQuery
