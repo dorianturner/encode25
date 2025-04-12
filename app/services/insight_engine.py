@@ -36,7 +36,7 @@ async def fetch_all_data_async():
 
 # externalData = data_sources.fetch_all_data(os.getenv("ETHER_KEY"), tokens=tokens)
 
-client = AsyncOpenAI()  # Initialize once
+client = OpenAI()  # Initialize once
 
 async def fetch_concurrently(walet = test_wallet):
     """Fetch all data in parallel"""
@@ -45,7 +45,72 @@ async def fetch_concurrently(walet = test_wallet):
         fetch_all_data_async()
     )
 
-async def analyze_wallet(wallet_query: wallet_fetcher.WalletQuery, callback=None):
+# async def analyze_wallet(wallet_query: wallet_fetcher.WalletQuery, callback=None):
+#     # Fetch data concurrently
+#     wallet_summary = await wallet_query.fetch_web3_data()
+#     wallet_transaction_history, external_data = await fetch_concurrently(wallet_query)
+    
+#     wallet_transaction_history = wallet_transaction_history["transactions"][-5:]
+
+#     # Truncate and summarize
+#     def summarize(data, max_chars=1500):
+#         text = json.dumps(data, indent=2)
+#         return text[:max_chars] + ("\n...[truncated]" if len(text) > max_chars else "")
+
+
+#     prompt = f"""
+#     Wallet Summary:
+#     {summarize(wallet_summary)}
+    
+#     Recent Transactions (last 5):
+#     {', '.join([f'{t["hash"]} ({t["blockNumber"]})' for t in wallet_transaction_history])}
+    
+#     External Data:
+#     {summarize(external_data)}
+    
+
+#     Question: {wallet_query.question}
+#     Take into account the following:
+#     - the given external data
+#     - the recent transactions
+#     - the wallet summary
+#     - the tokens in the wallet (recommend what other tokens it should invest in)
+#     TAKE into account past transactions and the current market trends.
+#     - Provide a detailed analysis of the wallet's performance and suggest improvements.
+#     Do not output the ETH balance or the market values, 
+#     but mention gas fees and the transaction history. 
+#     """
+    
+#     # Retry logic with exponential backoff
+
+#     delay = 5
+
+#     try:
+#             stream = await client.chat.completions.create(
+#                 model="gpt-4o-mini",  # Use latest optimized model
+#                 messages=[{"role": "user", "content": prompt}],
+#                 max_tokens=1000,
+#                 stream= True,  # Enable streaming
+#                 temperature=0.7,  # Adjust as needed
+#             )
+            
+#             result = ""
+#             async for chunk in stream:
+#                 content = chunk.choices[0].delta.content or ""
+#                 if callback:
+#                     await callback(content)
+#                 result += content
+            
+#             return {"response": result.strip()}
+#     except Exception as e:
+#             print(f"Attempt failed: {str(e)}")
+#             await asyncio.sleep(delay)
+#             delay *= 2
+    
+#     return {"error": "Request failed after retries"}
+
+
+async def get_stream(wallet_query: wallet_fetcher.WalletQuery):
     # Fetch data concurrently
     wallet_summary = await wallet_query.fetch_web3_data()
     wallet_transaction_history, external_data = await fetch_concurrently(wallet_query)
@@ -83,29 +148,12 @@ async def analyze_wallet(wallet_query: wallet_fetcher.WalletQuery, callback=None
     
     # Retry logic with exponential backoff
 
-    delay = 5
+    stream = client.chat.completions.create(
+        model="gpt-4o-mini",  # Use latest optimized model
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=1000,
+        stream= True,  # Enable streaming
+        temperature=0.7,  # Adjust as needed
+    )
 
-    try:
-            stream = await client.chat.completions.create(
-                model="gpt-4o-mini",  # Use latest optimized model
-                messages=[{"role": "user", "content": prompt}],
-                max_tokens=1000,
-                stream= True,  # Enable streaming
-                temperature=0.7,  # Adjust as needed
-            )
-            
-            result = ""
-            async for chunk in stream:
-                content = chunk.choices[0].delta.content or ""
-                if callback:
-                    await callback(content)
-                result += content
-            
-            return {"response": result.strip()}
-    except Exception as e:
-            print(f"Attempt failed: {str(e)}")
-            await asyncio.sleep(delay)
-            delay *= 2
-    
-    return {"error": "Request failed after retries"}
-
+    return stream

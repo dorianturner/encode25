@@ -233,46 +233,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const answerBox = document.getElementById('answer-box');
         const question = questionInput.value.trim();
         if (!question) return;
-        
+
         // Show loading state
         answerBox.innerHTML = '<div class="loading-spinner"></div>';
-        
-        try {
-            // Send to backend
-            const response = await fetch('/ask_question', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    question: question,
-                    address: sessionStorage.getItem('current_address') || ''
-                })
-            });
-        
-            console.log("Raw response object:", response);
-        
-            if (!response.ok) {
-                const errorText = await response.text(); // Read raw error
-                throw new Error(`Request failed (${response.status}): ${errorText}`);
-            }
-        
-            const data = await response.json();
-            console.log("Received data:", data);
-            
-            answerBox.innerHTML = `<div class="answer-text">${data.response}</div>`;
 
-        
-        } catch (error) {
-            console.log('Error:', error);
-            answerBox.innerHTML = '<div class="error">Failed to get response. Please try again.</div>';
-            console.error('Error:', error);
-        }
-    
-        // // dubious
         // try {
         //     // Send to backend
-        //     const response = await fetch('/ask_question_stream', {
+        //     const response = await fetch('/api/ask_question_stream', {
         //         method: 'POST',
         //         headers: {
         //             'Content-Type': 'application/json',
@@ -282,40 +249,73 @@ document.addEventListener('DOMContentLoaded', function() {
         //             address: sessionStorage.getItem('current_address') || ''
         //         })
         //     });
-        
-        //     if (!response.ok || !response.body) {
-        //         const errorText = await response.text();
-        //         throw new Error(Request failed (${response.status}): ${errorText});
+
+        //     console.log("Raw response object:", response);
+
+        //     if (!response.ok) {
+        //         const errorText = await response.text(); // Read raw error
+        //         throw new Error(`Request failed (${response.status}): ${errorText}`);
         //     }
-        
-        //     const reader = response.body.getReader();
-        //     const decoder = new TextDecoder();
-        //     let result = '';
-        
-        //     // Read and stream the response
-        //     while (true) {
-        //         const { value, done } = await reader.read();
-        //         if (done) break;
-        
-        //         const chunk = decoder.decode(value, { stream: true });
-        //         result += chunk;
-        
-        //         // Optionally: parse for specific structure if JSON chunks are emitted
-        //         answerBox.innerHTML = <div class="answer-text">${result}</div>;
-        //     }
-        
+
+        //     const data = await response.json();
+        //     console.log("Received data:", data);
+
+        //     answerBox.innerHTML = `<div class="answer-text">${data.response}</div>`;
+
+
         // } catch (error) {
         //     console.log('Error:', error);
         //     answerBox.innerHTML = '<div class="error">Failed to get response. Please try again.</div>';
+        //     console.error('Error:', error);
         // }
-    
-       
-    
+
+        // dubious
+        try {
+            // Send to backend
+            const response = await fetch('/api/ask_question_stream', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question: question,
+                    address: sessionStorage.getItem('current_address') || ''
+                })
+            });
+
+            if (!response.ok || !response.body) {
+                const errorText = await response.text();
+                throw new Error(`Request failed (${response.status}): ${errorText}`);
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let result = '';
+
+            // Read and stream the response
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                result += chunk;
+
+                // Optionally: parse for specific structure if JSON chunks are emitted
+                answerBox.innerHTML = `<div class="answer-text">${result}</div>`;
+            }
+
+        } catch (error) {
+            console.log('Error:', error);
+            answerBox.innerHTML = '<div class="error">Failed to get response. Please try again.</div>';
+        }
+
+
+
     });
 
 
 
-    
+
 
 
 
