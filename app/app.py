@@ -48,57 +48,6 @@ async def submit_address():
     
     return jsonify(response_data)
     
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
-
-# @app.route('/ask_question', methods=['POST'])
-# async def ask_question():
-#     if not request.is_json:
-#         return jsonify({"error": "Request must be JSON"}), 400
-        
-#     data = request.get_json()
-#     question = data.get('question', '').lower()
-#     address = data.get('address', '')
-    
-#     if not question:
-#         return jsonify({"error": "No question provided"}), 400
-    
-    
-#     wallet = wallet_fetcher.WalletQuery(
-#         wallet_address=address,
-#         question=question,
-#     )
-    
-#     #THIS WOKRS:
-#     result = await insight_engine.analyze_wallet(wallet)
-#     #this doesnt work
-#     #result = await insight_engine.stream_output(wallet)
-#     return jsonify({"response":result.get('response')})
-#    # return jsonify({"response": "hello world"})
-
-# streaming endpoint
-# @app.route('/ask_question_stream',methods=['POST'])
-# async def ask_question_stream(request: Request):
-#     data = await request.json()
-#     question = data.get('question', '').lower()
-#     address = data.get('address', '')
-    
-#     if not question:
-#         return {"error": "No question provided"}
-    
-#     wallet = wallet_fetcher.WalletQuery(
-#         wallet_address=address,
-#         tokens=data.get('tokens'),
-#         question=question,
-#     )
-    
-#     async def generate():
-#         async for chunk in analyze_wallet_stream(wallet):
-#             yield chunk
-
-#     return StreamingResponse(generate(), media_type="text/event-stream")
-
-
 
 fastapi_app = FastAPI()
 
