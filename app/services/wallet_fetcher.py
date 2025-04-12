@@ -38,7 +38,7 @@ class WalletQuery:
             self.etherscan_api = "https://api-sepolia.etherscan.io/api?"
             self.infura_url = "https://ethereum-sepolia-rpc.publicnode.com"
             self.alchemy_api = (
-                f"https://eth-sepolia.g.alchemy.com/v2/{os.getenv("ALCHEMY")}"
+                f"https://eth-sepolia.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
             )
         else:
             self.etherscan_api = "https://api.etherscan.io/api?"
@@ -46,7 +46,7 @@ class WalletQuery:
                 "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
             )
             self.alchemy_api = (
-                f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv("ALCHEMY")}"
+                f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
             )
 
         self.tokens = tokens
