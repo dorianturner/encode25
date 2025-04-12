@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from services.wallet_fetcher import WalletQuery, TOKEN_ADDRESSES
+from services.wallet_fetcher import WalletQuery
 import json
 # from services.tokens import tokens
 

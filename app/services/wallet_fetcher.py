@@ -2,11 +2,6 @@ import requests
 from web3 import Web3
 import json
 import os
-from tqdm import tqdm
-
-
-TOKEN_ADDRESSES = json.load(open(f"{os.path.dirname(__file__)}/tokens.json"))
-tokens = TOKEN_ADDRESSES.keys()
 
 ERC20_ABI = [
     {
