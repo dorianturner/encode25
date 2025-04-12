@@ -20,7 +20,93 @@
         </header>
 
         <div class="dashboard">
-            <!-- Question/Chat section (Left side) -->
+            <!-- Portfolio section (Left column) -->
+            <div class="card portfolio-section">
+                <h2>Portfolio</h2>
+                
+                <!-- Ethereum Address form -->
+                <form id="ethereum-form" action="/submit_address" method="post">
+                    <div class="input-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        <input type="text" name="ethereum_address" placeholder="Enter your Ethereum address" required>
+                    </div>
+                </form>
+
+                <div class="portfolio hidden">
+                    <div class="portfolio-header">
+                        <h2>Assets</h2>
+                        <div class="portfolio-value">Total: $3,050.00</div>
+                    </div>
+
+                    <div class="portfolio-list">
+                        <!-- Portfolio items will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle column (split into two rows) -->
+            <div class="middle-column">
+                <!-- Graph placeholder (Top middle) -->
+                <div class="card graph-section">
+                    <h2>Portfolio Analytics</h2>
+                    <div class="graph-placeholder">
+                        <div class="graph-header">
+                            <div class="graph-title">Performance Overview</div>
+                            <div class="graph-timeframe"> </div>
+                        </div>
+                        <div class="graph-content">
+                            <div class="chart-placeholder">
+                                <svg width="100%" height="200" viewBox="0 0 500 200">
+                                    <path d="M0,150 C100,100 200,180 300,80 C400,30 500,70 500,100" stroke="var(--primary)" stroke-width="3" fill="none"/>
+                                    <path d="M0,150 C100,100 200,180 300,80 C400,30 500,70 500,100 L500,200 L0,200 Z" fill="url(#gradient)" opacity="0.2"/>
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:var(--primary);stop-opacity:0" />
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="chart-value-indicator">
+                                    <div class="value-amount">+12.4%</div>
+                                    <div class="value-period">Past month</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- News section (Bottom middle) -->
+                <div class="card news-section">
+                    <h2>DeFi News</h2>
+                    <div class="news-container">
+                        <div class="news-item">
+                            <div class="news-date">APR 12</div>
+                            <div class="news-content">
+                                <h3>Ethereum Layer 2 Solutions See Record Growth</h3>
+                                <p>Transaction volume on Layer 2 networks has surpassed 2.5M ETH this month.</p>
+                            </div>
+                        </div>
+                        <div class="news-item">
+                            <div class="news-date">APR 10</div>
+                            <div class="news-content">
+                                <h3>New DeFi Protocol Launches with $30M TVL</h3>
+                                <p>Innovative yield aggregator attracts significant liquidity within 24 hours.</p>
+                            </div>
+                        </div>
+                        <div class="news-item">
+                            <div class="news-date">APR 08</div>
+                            <div class="news-content">
+                                <h3>Regulatory Clarity Coming for Stablecoins</h3>
+                                <p>New framework expected to provide clearer guidelines for stablecoin issuers.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question/Chat section (Right column) -->
             <div class="card chat-section">
                 <h2>Ask a question:</h2>
                 <div class="input-wrapper">
@@ -46,67 +132,6 @@
                     </div>
                     
                     <div class="answer-box" id="answer-box"> </div>
-                </div>
-            </div>
-
-            <!-- Right side column -->
-            <div class="right-column">
-                <!-- Graph placeholder (Top right) -->
-                <div class="card graph-section">
-                    <h2>Portfolio Analytics</h2>
-                    <div class="graph-placeholder">
-                        <div class="graph-header">
-                            <div class="graph-title">Performance Overview</div>
-                            <div class="graph-timeframe">
-                                <button class="btn btn-timeframe active">1D</button>
-                                <button class="btn btn-timeframe">1W</button>
-                                <button class="btn btn-timeframe">1M</button>
-                                <button class="btn btn-timeframe">1Y</button>
-                                <button class="btn btn-timeframe">All</button>
-                            </div>
-                        </div>
-                        <div class="graph-content">
-                            <div class="chart-placeholder">
-                                <svg width="100%" height="200" viewBox="0 0 500 200">
-                                    <path d="M0,150 C100,100 200,180 300,80 C400,30 500,70 500,100" stroke="var(--primary)" stroke-width="3" fill="none"/>
-                                    <path d="M0,150 C100,100 200,180 300,80 C400,30 500,70 500,100 L500,200 L0,200 Z" fill="url(#gradient)" opacity="0.2"/>
-                                    <defs>
-                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                            <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
-                                            <stop offset="100%" style="stop-color:var(--primary);stop-opacity:0" />
-                                        </linearGradient>
-                                    </defs>
-                                </svg>
-                                <div class="chart-value-indicator">
-                                    <div class="value-amount">+12.4%</div>
-                                    <div class="value-period">Past month</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Ethereum Address form (Bottom right) -->
-                <div class="card wallet-section">
-                    <h2>Ethereum Address</h2>
-                    <form id="ethereum-form" action="/submit_address" method="post">
-                        <div class="input-wrapper">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                            </svg>
-                            <input type="text" name="ethereum_address" placeholder="Enter your Ethereum address" required>
-                        </div>
-                    </form>
-
-                    <div class="portfolio hidden">
-                        <div class="portfolio-header">
-                            <h2>Portfolio</h2>
-                            <div class="portfolio-value">Total: $3,050.00</div>
-                        </div>
-
-                        <div class="portfolio-list">
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
