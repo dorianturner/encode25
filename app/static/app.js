@@ -116,6 +116,46 @@ document.addEventListener('DOMContentLoaded', function() {
             '0xC02aaA39b223FE8D0A0E5C4F27EAD9083C756Cc2': 2000 // WETH
         };
 
+        const historicalData = walletData['historical_data'];
+        const filteredHistoricalData = historicalData.filter(item => item.value !== 0);
+
+        console.log(filteredHistoricalData)
+
+        const dates = filteredHistoricalData.map(item => item.date);
+        const values = filteredHistoricalData.map(item => item.value);
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        const myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Values',
+                    data: values,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        }
+                    }
+                }
+            }
+        });
+
         // Calculate total value
         totalValue += ethValue * mockPrices['ETH'];
 
