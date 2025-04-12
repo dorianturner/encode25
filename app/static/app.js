@@ -140,11 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add ERC-20 tokens if available
         if (walletData['ERC-20 Token Balances']) {
             const tokenBalances = walletData['ERC-20 Token Balances'];
-            console.log(tokenBalances);
-
             // Create a mapping of addresses to token names
 
-            for (const [address, [balance, tokenName, tokenSymbol, logoURL]] of Object.entries(tokenBalances)) {
+            for (const [address, balance, tokenName, tokenSymbol, logoURL] of tokenBalances) {
+                console.log(address + " " + balance + " " + tokenName + " " + tokenSymbol + " " + logoURL);
                 const tokenValue = balance * (mockPrices[address] || 0);
                 totalValue += tokenValue;
 
