@@ -144,11 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Create a mapping of addresses to token names
 
-            for (const [address, [balance, name, logo]] of Object.entries(tokenBalances)) {
-                // console.log(balance + " " + name + " " + logo);
-                const tokenName = name;
-                const tokenSymbol = name;
-
+            for (const [address, [balance, tokenName, tokenSymbol, logoURL]] of Object.entries(tokenBalances)) {
                 const tokenValue = balance * (mockPrices[address] || 0);
                 totalValue += tokenValue;
 
@@ -156,14 +152,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="portfolio-item">
                         <div class="asset-info">
                             <div class="asset-icon">
-                                <img src="${logo}" onerror="this.src='static/images/generic-token.svg'" alt="${tokenSymbol}">
+                                <img src="${logoURL}" onerror="this.src='static/images/generic-token.png'" alt="${tokenSymbol}">
                             </div>
                             <div>
                                 <div class="asset-name">${tokenName}</div>
                                 <div class="asset-symbol">${tokenSymbol}</div>
                             </div>
                         </div>
-                        <div class="asset-amount">${parseFloat(balance).toFixed(2)}</div>
+                        <div class="asset-amount">${parseFloat(balance).toFixed(2)} ${tokenSymbol}</div>
                     </div>
                 `;
             }

@@ -62,7 +62,6 @@ async def ask_question():
     wallet = wallet_fetcher.WalletQuery(
         wallet_address=address,
         question=question,
-        debug=True
     )
     
     #THIS WOKRS:
@@ -86,7 +85,6 @@ async def ask_question_stream(request: Request):
         wallet_address=address,
         tokens=data.get('tokens'),
         question=question,
-        debug=True
     )
     
     async def generate():
@@ -96,4 +94,4 @@ async def ask_question_stream(request: Request):
     return StreamingResponse(generate(), media_type="text/event-stream")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug = True)

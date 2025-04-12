@@ -5,11 +5,8 @@ import asyncio
 import json
 from services import wallet_fetcher
 from services import data_sources
-from dotenv import load_dotenv 
 import os
 import time
-
-load_dotenv()
 
 # api keys
 openai.api_key = os.getenv("OPENAI_API_KEY")

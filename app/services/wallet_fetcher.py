@@ -5,28 +5,10 @@ import os
 import asyncio
 import aiohttp
 
-ERC20_ABI = [
-    {
-        "constant": True,
-        "inputs": [{"name": "_owner", "type": "address"}],
-        "name": "balanceOf",
-        "outputs": [{"name": "balance", "type": "uint256"}],
-        "type": "function",
-    },
-    {
-        "constant": True,
-        "inputs": [],
-        "name": "decimals",
-        "outputs": [{"name": "", "type": "uint8"}],
-        "type": "function",
-    },
-]
 
 # takes in wallet address, question? and list of tokens addresses
 class WalletQuery:
-    def __init__(
-        self, wallet_address: str, question: str = "", debug: bool = False
-    ):
+    def __init__(self, wallet_address: str, question: str = "", debug: bool = False):
         self.wallet_address = wallet_address
         self.question = question
 
@@ -94,7 +76,7 @@ class WalletQuery:
 
                 balance_int = int(hex_balance, 16)
                 formatted_balance = balance_int / (10 ** decimals)
-                token_balances[token_address] = (formatted_balance, meta.get("name"), meta.get("logo"))
+                token_balances[token_address] = (formatted_balance, meta.get("name"), meta.get("symbol"), meta.get("logo"))
 
             if token_balances:
                 response["ERC-20 Token Balances"] = token_balances
