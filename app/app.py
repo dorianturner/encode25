@@ -1,5 +1,10 @@
+from urllib.request import Request
+from services import wallet_fetcher
+from services.insight_engine import analyze_wallet_stream
 from flask import Flask, render_template, request, jsonify
+from fastapi.responses import StreamingResponse
 from services.wallet_fetcher import WalletQuery
+from services import insight_engine
 import json
 # from services.tokens import tokens
 
@@ -56,7 +61,6 @@ async def ask_question():
     
     wallet = wallet_fetcher.WalletQuery(
         wallet_address=address,
-        tokens=data.get('tokens'),
         question=question,
         debug=True
     )
@@ -67,6 +71,29 @@ async def ask_question():
     #result = await insight_engine.stream_output(wallet)
     return jsonify({"response":result.get('response')})
    # return jsonify({"response": "hello world"})
+
+# streaming endpoint
+@app.route('/ask_question_stream',methods=['POST'])
+async def ask_question_stream(request: Request):
+    data = await request.json()
+    question = data.get('question', '').lower()
+    address = data.get('address', '')
+    
+    if not question:
+        return {"error": "No question provided"}
+    
+    wallet = wallet_fetcher.WalletQuery(
+        wallet_address=address,
+        tokens=data.get('tokens'),
+        question=question,
+        debug=True
+    )
+    
+    async def generate():
+        async for chunk in analyze_wallet_stream(wallet):
+            yield chunk
+
+    return StreamingResponse(generate(), media_type="text/event-stream")
 
 if __name__ == '__main__':
     app.run(debug=True)

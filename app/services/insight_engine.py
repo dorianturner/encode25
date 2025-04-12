@@ -23,7 +23,6 @@ address = "0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97"
 # sample wallet summary
 test_wallet = wallet_fetcher.WalletQuery(
     wallet_address=address,
-    tokens=tokens,
     question="What should I do with my wallet?",
     debug=True
 )
@@ -113,26 +112,73 @@ async def analyze_wallet(wallet_query: wallet_fetcher.WalletQuery, callback=None
     
     return {"error": "Request failed after retries"}
 
-async def stream_output(wallet: wallet_fetcher.WalletQuery = test_wallet):
-    queue = asyncio.Queue()
+
+# streaming endpoint
+async def analyze_wallet_stream(wallet_query: wallet_fetcher.WalletQuery, callback=None):
+    # Fetch data concurrently
+    wallet_summary, wallet_transaction_history, external_data = await fetch_concurrently()
     
-    async def callback(chunk):
-        print(chunk, end="", flush=True)
-        await queue.put(chunk)
+    # Truncate and summarize
+    def summarize(data, max_chars=1500):
+        text = json.dumps(data, indent=2)
+        return text[:max_chars] + ("\n...[truncated]" if len(text) > max_chars else "")
+
+    print(summarize(wallet_transaction_history[-50:]))
+    prompt = f"""
+    **Wallet Summary**:
+    {summarize(wallet_summary)}
     
-    async def monitor():
-        while True:
-            if queue.empty() and asyncio.current_task().cancelled():
-                break
-            await asyncio.sleep(0.1)
+    **Recent Transactions** (last 5):
+    {', '.join([f'{t["hash"]} ({t["block_number"]})' for t in wallet_transaction_history[-50:]])}
+    
+    **External Data**:
+    {summarize(external_data)}
+    
 
-    analysis_task = asyncio.create_task(analyze_wallet(wallet, callback=callback))
-    monitor_task = asyncio.create_task(monitor())
+    **Question**: {wallet_query.question}
+    Take into account the following:
+    - the given external data
+    - the recent transactions
+    - the wallet summary
+    - the tokens in the wallet (recommend what other tokens it should invest in)
+    TAKE into account past transactions and the current market trends.
+    - Provide a detailed analysis of the wallet's performance and suggest improvements.
+    Do not output the ETH balance or the market values, 
+    but mention gas fees and the transaction history. 
+    """
+    
+    # Retry logic with exponential backoff
 
-    await asyncio.gather(analysis_task, monitor_task)
-    return await analysis_task
+    delay = 5
+
+    try:
+            stream = await client.chat.completions.create(
+                model="gpt-4o-mini",  # Use latest optimized model
+                messages=[{"role": "user", "content": prompt}],
+                max_tokens=1000,
+                stream= True,  # Enable streaming
+                temperature=0.7,  # Adjust as needed
+            )
+            
+            result = ""
+            async for chunk in stream:
+                content = chunk.choices[0].delta.content or ""
+                # Send chunks as they arrive
+                yield f"data: {json.dumps({'chunk': content})}\n\n"
 
 
+
+    except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+    
+    #return {"error": "Request failed after retries"}
+
+
+
+
+
+
+#
 
 # if __name__ == "__main__":
 #     async def main():
