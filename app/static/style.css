@@ -330,7 +330,6 @@ input[type="text"]:focus {
 
 .answer-box {
     background: var(--card-bg);
-    border-left: 4px solid var(--primary);
     border-radius: 0 var(--radius) var(--radius) 0;
     padding: 20px;
     margin-top: 16px;
