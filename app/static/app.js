@@ -193,7 +193,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             drawBorder: false
                         },
                         ticks: {
-                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-muted')
+                            callback: function(value, index) {
+                                const date = new Date(this.getLabelForValue(value));
+                                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                            }
                         }
                     },
                     y: {
