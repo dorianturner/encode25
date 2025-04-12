@@ -143,13 +143,9 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(tokenBalances);
 
             // Create a mapping of addresses to token names
-            const addressToName = {};
-            for (const [name, address] of Object.entries(TOKEN_ADDRESSES)) {
-                addressToName[address] = name;
-            }
 
             for (const [address, [balance, name, logo]] of Object.entries(tokenBalances)) {
-                console.log(balance + " " + name + " " + logo);
+                // console.log(balance + " " + name + " " + logo);
                 const tokenName = name;
                 const tokenSymbol = name;
 
@@ -160,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="portfolio-item">
                         <div class="asset-info">
                             <div class="asset-icon">
-                                <img src="static/images/${tokenSymbol.toLowerCase()}-logo.svg" onerror="this.src='static/images/generic-token.svg'" alt="${tokenSymbol}">
+                                <img src="${logo}" onerror="this.src='static/images/generic-token.svg'" alt="${tokenSymbol}">
                             </div>
                             <div>
                                 <div class="asset-name">${tokenName}</div>
@@ -278,25 +274,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error:', error);
         }
     });
-
-    // Add global TOKEN_ADDRESSES for use in the JavaScript
-
-    let TOKEN_ADDRESSES;
-
-    fetch("static/tokens.json")
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(json => {
-        TOKEN_ADDRESSES = json;
-        console.log('TOKEN_ADDRESSES:', TOKEN_ADDRESSES);
-      })
-      .catch(error => {
-        console.error('Error loading TOKEN_ADDRESSES:', error);
-      });
 
     // Add event listener for window resize to adjust heights
     window.addEventListener('resize', adjustPortfolioHeight);
