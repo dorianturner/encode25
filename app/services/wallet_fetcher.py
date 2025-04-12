@@ -2,6 +2,8 @@ import requests
 from web3 import Web3
 import json
 import os
+import asyncio
+import aiohttp
 
 ERC20_ABI = [
     {
@@ -19,7 +21,6 @@ ERC20_ABI = [
         "type": "function",
     },
 ]
-
 
 # takes in wallet address, question? and list of tokens addresses
 class WalletQuery:
@@ -40,7 +41,7 @@ class WalletQuery:
 
         self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
 
-    def fetch_web3_data(self):
+    async def fetch_web3_data(self):
         if not self.web3.is_connected():
             print("Failed to connect to the Ethereum network.")
             return
@@ -64,29 +65,36 @@ class WalletQuery:
 
             erc20_response = requests.post(self.alchemy_api, json = payload, headers=headers).json()
 
-            # Fetch balances for each ERC-20 token
+            tokens = [
+                token for token in erc20_response["result"]["tokenBalances"]
+                if int(token["tokenBalance"], 16) != 0
+            ]
+
+            async with aiohttp.ClientSession() as session:
+                tasks = [
+                    self.get_token_metadata(session, token["contractAddress"])
+                    for token in tokens
+                ]
+                
+                metadata_results = await asyncio.gather(*tasks)
+
             token_balances = {}
 
-            for token in erc20_response["result"]["tokenBalances"]:
+            for token, metadata in zip(tokens, metadata_results):
+                token_address = token["contractAddress"]
                 hex_balance = token["tokenBalance"]
-                if int(hex_balance, 16) != 0:
-                    token_address = token["contractAddress"]
-                    # Get token metadata to properly format balance
-                    metadata = self.get_token_metadata(token_address)
-                    open("metadata.json", "a+").write(str(metadata))
+                meta = metadata
 
-                    decimals = metadata.get("decimals")  # Default to 18 decimals if not found
+                decimals = meta.get("decimals")
 
-                    if decimals is None:
-                        decimals = 18
-                    else:
-                        decimals = int(decimals)
+                if decimals is None:
+                    decimals = 18
+                else:
+                    decimals = int(decimals)
 
-                    # Convert hex balance to decimal
-                    balance_int = int(hex_balance, 16)
-                    formatted_balance = balance_int / (10**decimals)
-                    # print(formatted_balance)
-                    token_balances[token_address] = (formatted_balance, metadata["name"], metadata["logo"])
+                balance_int = int(hex_balance, 16)
+                formatted_balance = balance_int / (10 ** decimals)
+                token_balances[token_address] = (formatted_balance, meta.get("name"), meta.get("logo"))
 
             if token_balances:
                 response["ERC-20 Token Balances"] = token_balances
@@ -109,7 +117,7 @@ class WalletQuery:
                 "Invalid input. Please enter a valid Ethereum address or transaction hash."
             )
 
-    def get_token_metadata(self, token_address):
+    async def get_token_metadata(self, session, token_address):
         payload = {
             "jsonrpc": "2.0",
             "method": "alchemy_getTokenMetadata",
@@ -120,9 +128,9 @@ class WalletQuery:
         headers = {"Content-Type": "application/json"}
 
         try:
-            response = requests.post(self.alchemy_api, json = payload, headers=headers)
-            data = response.json()
-            return data.get("result", {})
+            async with session.post(self.alchemy_api, json = payload, headers=headers) as response:
+                data = await response.json()
+                return data.get("result", {})
         except:
             return {}
 
@@ -142,23 +150,6 @@ class WalletQuery:
         except Exception as e:
             print(f"API request failed: {e}")
             return []
-
-    def get_erc20_balance(self, web3, wallet_address, token_address):
-        # ERC-20 ABI snippet required for balanceOf and decimals
-        try:
-            token_address = Web3.to_checksum_address(token_address)
-            wallet_address = Web3.to_checksum_address(wallet_address)
-            contract = web3.eth.contract(address=token_address, abi=ERC20_ABI)
-
-            balance = contract.functions.balanceOf(wallet_address).call()
-            decimals = contract.functions.decimals().call()
-
-            return float(balance) / (10**decimals)
-
-        except Exception as e:
-            print(f"[Error] Could not fetch balance for {token_address}: {e}")
-            return 0.0
-
 
 if __name__ == "__main__":
     # address = "0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE"

@@ -11,7 +11,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/submit_address', methods=['POST'])
-def submit_address():
+async def submit_address():
     ethereum_address = request.form.get('ethereum_address')
     
     if not ethereum_address:
@@ -22,7 +22,7 @@ def submit_address():
     
     # try:
     # Fetch wallet balance data
-    wallet_data = wallet.fetch_web3_data()
+    wallet_data = await wallet.fetch_web3_data()
     
     # Parse the JSON string back to a dictionary
     if wallet_data:
