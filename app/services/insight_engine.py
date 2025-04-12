@@ -3,8 +3,8 @@ from fastapi import FastAPI,Request
 import openai
 import asyncio
 import json
-import wallet_fetcher
-import data_sources
+from services import wallet_fetcher
+from services import data_sources
 import os
 import time
 
