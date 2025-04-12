@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const headerHeight = getElementHeight('.portfolio-header');
         const padding = 56; // 28px top + 28px bottom
 
-        const minHeight = 100;
+        const minHeight = 1000;
         const calculatedHeight = walletHeight - formHeight - headerHeight - padding - 16;
 
         portfolioList.style.maxHeight = `${Math.max(minHeight, calculatedHeight)}px`;
