@@ -1,23 +1,21 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Adjust portfolio height dynamically based on content
     function adjustPortfolioHeight() {
+        const getElementHeight = (selector) => 
+            document.querySelector(selector)?.clientHeight || 0;
+    
         const portfolioList = document.querySelector('.portfolio-list');
-        const portfolioSection = document.querySelector('.portfolio');
-        const walletSection = document.querySelector('.wallet-section');
+        if (!portfolioList) return;
+    
+        const walletHeight = getElementHeight('.wallet-section');
+        const formHeight = getElementHeight('#ethereum-form');
+        const headerHeight = getElementHeight('.portfolio-header');
+        const padding = 56; // 28px top + 28px bottom
+    
+        const minHeight = 100;
+        const calculatedHeight = walletHeight - formHeight - headerHeight - padding - 16;
         
-        if (!portfolioList || !portfolioSection || !walletSection) return;
-        
-        // Get the available height for the portfolio list
-        const walletHeight = walletSection.clientHeight;
-        const formHeight = document.getElementById('ethereum-form')?.clientHeight || 0;
-        const portfolioHeaderHeight = document.querySelector('.portfolio-header')?.clientHeight || 0;
-        const padding = 28 * 2; // Card padding (top and bottom)
-        
-        // Calculate maximum height for portfolio list
-        const maxHeight = walletHeight - formHeight - portfolioHeaderHeight - padding - 16; // 16px extra for margin
-        
-        // Set max-height for scrolling
-        portfolioList.style.maxHeight = `${Math.max(100, maxHeight)}px`;
+        portfolioList.style.maxHeight = `${Math.max(minHeight, calculatedHeight)}px`;
     }
 
     // Theme toggle functionality
