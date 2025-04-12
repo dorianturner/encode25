@@ -38,11 +38,13 @@ class WalletQuery:
         if debug:
             self.etherscan_api = "https://api-sepolia.etherscan.io/api?"
             self.infura_url = "https://ethereum-sepolia-rpc.publicnode.com"
-
         else:
             self.etherscan_api = "https://api.etherscan.io/api?"
             self.infura_url = (
                 "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
+            )
+            self.alchemy_api = (
+                f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
             )
 
         self.tokens = tokens
@@ -79,35 +81,25 @@ class WalletQuery:
                 .json()
             )
 
+            print(erc20_response)
+
             # Fetch balances for each ERC-20 token
             token_balances = {}
 
-            for token in erc20_response["result"]["tokenBalances"]:
-                hex_balance = token["tokenBalance"]
-                if (
-                    hex_balance
-                    != "0x0000000000000000000000000000000000000000000000000000000000000000"
-                ):
-                    token_address = token["contractAddress"]
-                    print(token_address)
-                    # Get token metadata to properly format balance
-                    metadata = self.get_token_metadata(token_address)
+            tokens = [t for t in self.tokens if t in TOKEN_ADDRESSES]
+            
+            for token_name in tqdm(tokens):
+                if token_name not in TOKEN_ADDRESSES:
+                    print(f"Token {token_name} is not in the predefined list.")
+                    continue
+                # Fetch token balance using the token address
+                token_address = TOKEN_ADDRESSES[token_name]
+                token_balance = self.get_erc20_balance(
+                    self.web3, self.wallet_address, token_address
+                )
 
-                    decimals = metadata.get("decimals")  # Default to 18 decimals if not found
-                    if decimals is None:
-                        decimals = 18
-                    else:
-                        decimals = int(decimals)
-
-                    print("Decimals:", decimals)
-
-                    # Convert hex balance to decimal
-                    balance_int = int(hex_balance, 16)
-                    formatted_balance = balance_int / (10**decimals)
-
-                    # print(formatted_balance)
-
-                    token_balances[token_address] = formatted_balance
+                if token_balance:
+                    token_balances[token_address] = token_balance
 
             if token_balances:
                 print(token_balances)
@@ -131,26 +123,6 @@ class WalletQuery:
             print(
                 "Invalid input. Please enter a valid Ethereum address or transaction hash."
             )
-
-    def get_token_metadata(self, token_address):
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "alchemy_getTokenMetadata",
-            "params": [token_address],
-            "id": 1,
-        }
-
-        headers = {"Content-Type": "application/json"}
-
-        try:
-            response = requests.post(
-                self.alchemy_api, data=json.dumps(payload), headers=headers
-            )
-            data = response.json()
-            print(data)
-            return data.get("result", {})
-        except:
-            return {}
 
     def fetch_web3_history(self):
         API_KEY = os.getenv("ETHER_SCAN")
