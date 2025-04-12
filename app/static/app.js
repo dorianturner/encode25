@@ -231,8 +231,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!question) return;
     
         // Show loading state
-        answerBox.innerHTML = '<div class="loading-spinner"></div>';
-    
+        answerBox.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            
         try {
             // Send to backend
             const response = await fetch('/api/ask_question_stream', {
