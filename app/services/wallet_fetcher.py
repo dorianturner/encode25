@@ -15,11 +15,19 @@ class WalletQuery:
         if debug:
             self.etherscan_api = "https://api-sepolia.etherscan.io/api?"
             self.infura_url = "https://ethereum-sepolia-rpc.publicnode.com"
-            self.alchemy_api = f"https://eth-sepolia.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
+            self.alchemy_api = (
+                f"https://eth-sepolia.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
+            )
+            self.covalent_api = "https://api.covalenthq.com/v1/eth-sepolia/address/"
         else:
             self.etherscan_api = "https://api.etherscan.io/api?"
-            self.infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
-            self.alchemy_api = f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
+            self.infura_url = (
+                "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
+            )
+            self.alchemy_api = (
+                f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
+            )
+            self.covalent_api = "https://api.covalenthq.com/v1/eth-mainnet/address/"
 
         self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
 
@@ -45,10 +53,13 @@ class WalletQuery:
 
             headers = {"Content-Type": "application/json"}
 
-            erc20_response = requests.post(self.alchemy_api, json = payload, headers=headers).json()
+            erc20_response = requests.post(
+                self.alchemy_api, json=payload, headers=headers
+            ).json()
 
             tokens = [
-                token for token in erc20_response["result"]["tokenBalances"]
+                token
+                for token in erc20_response["result"]["tokenBalances"]
                 if int(token["tokenBalance"], 16) != 0
             ]
 
@@ -57,7 +68,7 @@ class WalletQuery:
                     self.get_token_metadata(session, token["contractAddress"])
                     for token in tokens
                 ]
-                
+
                 metadata_results = await asyncio.gather(*tasks)
 
             token_balances = {}
@@ -75,8 +86,13 @@ class WalletQuery:
                     decimals = int(decimals)
 
                 balance_int = int(hex_balance, 16)
-                formatted_balance = balance_int / (10 ** decimals)
-                token_balances[token_address] = (formatted_balance, meta.get("name"), meta.get("symbol"), meta.get("logo"))
+                formatted_balance = balance_int / (10**decimals)
+                token_balances[token_address] = (
+                    formatted_balance,
+                    meta.get("name"),
+                    meta.get("symbol"),
+                    meta.get("logo"),
+                )
 
             if token_balances:
                 response["ERC-20 Token Balances"] = token_balances
@@ -110,7 +126,9 @@ class WalletQuery:
         headers = {"Content-Type": "application/json"}
 
         try:
-            async with session.post(self.alchemy_api, json = payload, headers=headers) as response:
+            async with session.post(
+                self.alchemy_api, json=payload, headers=headers
+            ) as response:
                 data = await response.json()
                 return data.get("result", {})
         except:
@@ -132,6 +150,30 @@ class WalletQuery:
         except Exception as e:
             print(f"API request failed: {e}")
             return []
+
+    def fetch_web3_value_history(self):
+        API_KEY = os.getenv("COVALENT")
+
+        url = f"{self.covalent_api}/{self.wallet_address}/portfolio_v2/"
+
+        headers = {"Authorization": f"Bearer {API_KEY}"}
+
+        try:
+            response = requests.get(url, headers=headers).json()
+            data = []
+
+            for item in response["data"]["items"]:
+                for holding in item["holdings"]:
+                    date = holding["timestamp"][:10]  # Just get YYYY-MM-DD
+                    value = holding["close"]["quote"]
+                    data.append({"date": date, "value": value})
+
+            return sorted(data, key=lambda x: x["date"])
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
+
 
 if __name__ == "__main__":
     # address = "0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE"
