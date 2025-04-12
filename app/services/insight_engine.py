@@ -3,14 +3,13 @@ from fastapi import FastAPI,Request
 import openai
 import asyncio
 import json
-from services import wallet_fetcher
-from services import data_sources
+import wallet_fetcher
+import data_sources
 import os
 import time
 
 # api keys
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 
 tokens = ["USDT", "USDC", "DAI"]
 
@@ -170,19 +169,9 @@ async def analyze_wallet_stream(wallet_query: wallet_fetcher.WalletQuery, callba
     
     #return {"error": "Request failed after retries"}
 
-
-
-
-
-
-#
-
-# if __name__ == "__main__":
-#     async def main():
-#         result = await stream_output()
-#         print("\n\nFinal Result:")
-#         print(result["response"])
-#     asyncio.run(main())
-    
-    
-
+if __name__ == "__main__":
+    async def main():
+        result = await stream_output()
+        print("\n\nFinal Result:")
+        print(result["response"])
+    asyncio.run(main())

@@ -1,20 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Adjust portfolio height dynamically based on content
     function adjustPortfolioHeight() {
-        const getElementHeight = (selector) => 
+        const getElementHeight = (selector) =>
             document.querySelector(selector)?.clientHeight || 0;
-    
+
         const portfolioList = document.querySelector('.portfolio-list');
         if (!portfolioList) return;
-    
+
         const walletHeight = getElementHeight('.wallet-section');
         const formHeight = getElementHeight('#ethereum-form');
         const headerHeight = getElementHeight('.portfolio-header');
         const padding = 56; // 28px top + 28px bottom
-    
+
         const minHeight = 100;
         const calculatedHeight = walletHeight - formHeight - headerHeight - padding - 16;
-        
+
         portfolioList.style.maxHeight = `${Math.max(minHeight, calculatedHeight)}px`;
     }
 
@@ -23,37 +23,37 @@ document.addEventListener('DOMContentLoaded', function() {
         const htmlElement = document.documentElement;
         const themeToggle = document.getElementById('theme-toggle');
         const themeToggleIcon = document.getElementById('theme-toggle-icon');
-        
+
         const setTheme = (theme) => {
             htmlElement.classList.remove('light', 'dark');
             htmlElement.classList.add(theme);
             localStorage.setItem('theme', theme);
         };
-    
+
         const toggleTheme = () => {
             const isLight = htmlElement.classList.contains('light');
             setTheme(isLight ? 'dark' : 'light');
         };
-    
+
         const init = () => {
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
-            
+
             setTheme(initialTheme);
             themeToggle.addEventListener('click', toggleTheme);
         };
-    
+
         return { init };
     })();
-    
+
     ThemeManager.init();
 
     // Handle Ethereum address form submission
     const ethereumForm = document.getElementById('ethereum-form');
     const portfolioList = document.querySelector('.portfolio-list');
     const portfolioValue = document.querySelector('.portfolio-value');
-    const portfolioSection = document.querySelector('.portfolio'); 
+    const portfolioSection = document.querySelector('.portfolio');
 
     // Ethereum form handling
     if (ethereumForm) {
@@ -140,11 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add ERC-20 tokens if available
         if (walletData['ERC-20 Token Balances']) {
             const tokenBalances = walletData['ERC-20 Token Balances'];
-            console.log(tokenBalances);
-
             // Create a mapping of addresses to token names
 
-            for (const [address, [balance, tokenName, tokenSymbol, logoURL]] of Object.entries(tokenBalances)) {
+            for (const [address, balance, tokenName, tokenSymbol, logoURL] of tokenBalances) {
+                console.log(address + " " + balance + " " + tokenName + " " + tokenSymbol + " " + logoURL);
                 const tokenValue = balance * (mockPrices[address] || 0);
                 totalValue += tokenValue;
 
@@ -167,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Update the DOM
         portfolioList.innerHTML = portfolioHTML;
-        
+
         // For smoother animation, update the text after a brief delay
         setTimeout(() => {
             // Use a counter animation for the total value
@@ -175,16 +174,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 portfolioValue.textContent = `Total: $${value.toFixed(2)}`;
             });
         }, 100);
-        
+
         // Adjust portfolio height before showing
         adjustPortfolioHeight();
-        
+
         // Remove hidden class first
         portfolioSection.classList.remove('hidden');
-        
+
         // Force a reflow before adding the revealed class
         void portfolioSection.offsetWidth;
-        
+
         // Then add revealed class to trigger animation
         portfolioSection.classList.add('revealed');
     }
@@ -192,21 +191,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Counter animation function
     function animateCounter(start, end, duration, callback) {
         const startTime = performance.now();
-        
+
         function update(currentTime) {
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / duration, 1);
             // Use easeOutExpo for smoother animation
             const easing = 1 - Math.pow(2, -10 * progress);
             const currentValue = start + (end - start) * easing;
-            
+
             callback(currentValue);
-            
+
             if (progress < 1) {
                 requestAnimationFrame(update);
             }
         }
-        
+
         requestAnimationFrame(update);
     }
 
@@ -230,10 +229,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const answerBox = document.getElementById('answer-box');
         const question = questionInput.value.trim();
         if (!question) return;
-        
+
         // Show loading state
         answerBox.innerHTML = '<div class="loading-spinner"></div>';
-        
+
         try {
             // Send to backend
             const response = await fetch('/ask_question', {
@@ -246,17 +245,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     address: sessionStorage.getItem('current_address') || ''
                 })
             });
-            
+
             console.log("Raw response object:", response);
-            
+
             if (!response.ok) {
                 const errorText = await response.text(); // Read raw error
                 throw new Error(`Request failed (${response.status}): ${errorText}`);
             }
-            
+
             const data = await response.json();
             console.log("Received data:", data);
-            
+
             // Import and use a markdown parser library (marked.js)
             if (typeof marked === 'undefined') {
                 // If marked.js is not already loaded, dynamically load it

@@ -71,7 +71,7 @@ class WalletQuery:
 
                 metadata_results = await asyncio.gather(*tasks)
 
-            token_balances = {}
+            token_balances = []
 
             for token, metadata in zip(tokens, metadata_results):
                 token_address = token["contractAddress"]
@@ -86,16 +86,22 @@ class WalletQuery:
                     decimals = int(decimals)
 
                 balance_int = int(hex_balance, 16)
+
                 formatted_balance = balance_int / (10**decimals)
-                token_balances[token_address] = (
-                    formatted_balance,
-                    meta.get("name"),
-                    meta.get("symbol"),
-                    meta.get("logo"),
+                token_balances.append(
+                    (
+                        token_address,
+                        formatted_balance,
+                        meta.get("name"),
+                        meta.get("symbol"),
+                        meta.get("logo"),
+                    )
                 )
 
             if token_balances:
-                response["ERC-20 Token Balances"] = token_balances
+                response["ERC-20 Token Balances"] = sorted(
+                    token_balances, key=lambda x: x[1], reverse=True
+                )
 
             return json.dumps(response, indent=2)
 
