@@ -1,6 +1,7 @@
 import requests
 from web3 import Web3
 import json
+import os
 
 # List of common ERC-20 tokens and their contract addresses
 TOKEN_ADDRESSES = {
