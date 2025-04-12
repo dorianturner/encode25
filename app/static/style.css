@@ -219,7 +219,7 @@ input[type="text"]:focus {
     display: flex;
     flex-direction: column;
     flex: 1;
-    opacity: 0;
+    opacity: 1;
     transform: scale(0.95);
     transition: opacity 0.5s ease, transform 0.5s ease;
     height: 100%; /* Take full height */

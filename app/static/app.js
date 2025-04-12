@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const address = formData.get('ethereum_address');
 
             // Show loading state
+            portfolioSection.classList.remove('hidden');
             portfolioList.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
