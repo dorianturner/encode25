@@ -68,11 +68,33 @@ class WalletQuery:
 
                 metadata_results = await asyncio.gather(*tasks)
 
-            coingecko_ids = ",".join(map(lambda x: x["name"].lower().replace(" ", "-"), metadata_results))
-            url = "https://api.coingecko.com/api/v3/simple/price"
-            params = {"ids": "ethereum," + coingecko_ids, "vs_currencies": "usd"}
-            usd_prices = requests.get(url, params = params).json()
+            payload = {"addresses": [
+                {
+                    "network": "eth-mainnet",
+                    "address": token["contractAddress"]
+                }
+
+                for token in tokens
+                ]
+            }
+
+            headers = {
+                "accept": "application/json",
+                "content-type": "application/json"
+            }
+
+            price_data = requests.post(
+                f"https://api.g.alchemy.com/prices/v1/{os.getenv('ALCHEMY')}/tokens/by-address",
+                json = payload,
+                headers = headers
+            ).json()["data"]
+
+            token_prices = dict()
             token_balances = []
+
+            for token in price_data:
+                token_prices[token["address"]] = "NaN" if "error" in token else token["prices"][0]["value"]
+                token_prices[token["address"]] = 0 if float(token_prices[token["address"]]) > 65000 else token_prices[token["address"]] # hacky
 
             for token, metadata in zip(tokens, metadata_results):
                 token_address = token["contractAddress"]
@@ -86,22 +108,23 @@ class WalletQuery:
                     decimals = int(decimals)
 
                 balance_int = int(hex_balance, 16)
-                coingecko_id = metadata["name"].lower().replace(" ", "-")
-                formatted_balance = balance_int / (10**decimals)
+                formatted_balance = balance_int / (10 ** decimals)
                 token_balances.append(
                     (
                         token_address,
                         formatted_balance,
-                        metadata.get("name"),
-                        metadata.get("symbol"),
-                        metadata.get("logo"),
-                        usd_prices[coingecko_id]["usd"]
+                        metadata["name"],
+                        metadata["symbol"],
+                        metadata["logo"],
+                        str(float(token_prices.get(token_address)) * formatted_balance)
                     )
                 )
 
+            response["ETH"] = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd").json()["ethereum"]["usd"]
+            print(response["ETH"])
             if token_balances:
                 response["ERC-20 Token Balances"] = sorted(
-                    token_balances, key=lambda x: x[1], reverse=True
+                    token_balances, key=lambda x: float(x[-1]), reverse=True
                 )
 
             return json.dumps(response, indent=2)

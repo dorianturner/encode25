@@ -108,19 +108,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // For a real app, you would fetch current price data
         // This is a simplified calculation
-        const mockPrices = {
-            'ETH': 2000,
-            '0xA0b86991C6218B36c1d19D4a2e9eb0ce3606eB48': 1, // USDC
-            '0x6B175474E89094C44Da98b954EedeAC495271d0F': 1, // DAI
-            '0x55d398326f99059fF775485246999027B3197955': 1, // USDT
-            '0xC02aaA39b223FE8D0A0E5C4F27EAD9083C756Cc2': 2000 // WETH
-        };
 
         // Calculate total value
         // totalValue += ethValue * mockPrices['ETH'];
 
         // Create HTML for portfolio items
         let portfolioHTML = '';
+
+        let ethPrice = walletData['ETH'] || 0;
+        totalValue += ethValue * ethPrice;
 
         // Add ETH
         portfolioHTML += `
@@ -134,8 +130,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="asset-symbol">ETH</div>
                     </div>
                 </div>
+
+            <div>
                 <div class="asset-amount">${ethValue.toFixed(4)} ETH</div>
+                <div class="asset-price">\$${(ethValue * ethPrice).toFixed(2)}</div>
             </div>
+                </div>
         `;
 
         // Add ERC-20 tokens if available
@@ -145,8 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             for (const [address, balance, tokenName, tokenSymbol, logoURL, price] of tokenBalances) {
                 console.log(address + " " + balance + " " + tokenName + " " + tokenSymbol + " " + logoURL + " " + price);
-                const tokenValue = balance * (mockPrices[address] || 0);
-                totalValue += tokenValue;
+                totalValue += parseFloat(price);
 
                 portfolioHTML += `
                     <div class="portfolio-item">
@@ -161,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         <div>
                             <div class="asset-amount">${parseFloat(balance).toFixed(2)} ${tokenSymbol}</div>
-                            <div class="asset-price">\$${price}</div>
+                            <div class="asset-price">\$${parseFloat(price).toFixed(2)}</div>
                         </div>
                     </div>
                 `;
@@ -175,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             // Use a counter animation for the total value
             animateCounter(0, totalValue, 1500, value => {
-                portfolioValue.textContent = `Total: $${value.toFixed(2)}`;
+                portfolioValue.textContent = `Total: $${totalValue.toFixed(2)}`;
             });
         }, 100);
 
