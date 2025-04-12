@@ -28,9 +28,11 @@
                 <!-- Ethereum Address form -->
                 <form id="ethereum-form" action="/submit_address" method="post">
                     <div class="input-wrapper">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                        </svg>
+                        <span title="Enter your wallet address here for a detailed breakdown">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                        </span>
                         <input type="text" name="ethereum_address" placeholder="Enter your Ethereum address" required>
                     </div>
                 </form>
@@ -99,13 +101,17 @@
             <div class="card chat-section">
                 <h2>Ask a question:</h2>
                 <div class="input-wrapper">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                    </svg>
+                    <span title="An address must be loaded for a question to be asked">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </span>                    
                     <form id="question-form">
-                        <input type="text" placeholder="What's my risk level on protocol X?" id="question-input">
+                        <input type="text" placeholder="What is my risk for token X?" id="question-input">
                         <button type="submit" style="display: none;"></button>
                     </form>
                 </div>
@@ -113,9 +119,11 @@
                 <div class="assistant-section">
                     <div class="assistant-header">
                         <div class="assistant-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
+                            <span title="The AI will customise your answer to your portfolio">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </span>
                         </div>
                         <h2>AI Assistant</h2>
                     </div>
