@@ -149,7 +149,7 @@ class WalletQuery:
             response = requests.get(url, timeout=10)
             data = response.json()
             if data["status"] == "1":
-                return json.dumps({"transactions": data["result"]}, indent=2)
+                return {"transactions": data["result"]}
             else:
                 print("Etherscan error:", data["message"])
                 return []
