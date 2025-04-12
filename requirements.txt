@@ -230,7 +230,6 @@ unattended-upgrades==0.1
 unicodedata2==14.0.0
 unicorn==2.1.1
 unix-ar==0.2.1
-UNKNOWN @ file:///home/x/round_1_replay/bx04
 urllib3==2.4.0
 userpath==1.8.0
 uvicorn==0.34.0
