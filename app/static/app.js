@@ -230,11 +230,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle question submission
     document.getElementById('question-form').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
         const questionInput = document.getElementById('question-input');
         const answerBox = document.getElementById('answer-box');
         const question = questionInput.value.trim();
-        
         if (!question) return;
         
         // Show loading state
@@ -252,22 +250,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     address: sessionStorage.getItem('current_address') || ''
                 })
             });
-        
+            
             console.log("Raw response object:", response);
-        
+            
             if (!response.ok) {
                 const errorText = await response.text(); // Read raw error
                 throw new Error(`Request failed (${response.status}): ${errorText}`);
             }
-        
+            
             const data = await response.json();
             console.log("Received data:", data);
             
-            answerBox.innerHTML = `<div class="answer-text">${data.response}</div>`;
-
-        
-      
-            
+            // Import and use a markdown parser library (marked.js)
+            if (typeof marked === 'undefined') {
+                // If marked.js is not already loaded, dynamically load it
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js';
+                script.onload = function() {
+                    // After loading, render the markdown
+                    answerBox.innerHTML = `<div class="answer-text">${marked.parse(data.response)}</div>`;
+                };
+                document.head.appendChild(script);
+            } else {
+                // If marked is already loaded, use it directly
+                answerBox.innerHTML = `<div class="answer-text">${marked.parse(data.response)}</div>`;
+            }
         } catch (error) {
             console.log('Error:', error);
             answerBox.innerHTML = '<div class="error">Failed to get response. Please try again.</div>';
