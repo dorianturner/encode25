@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="app/static/images/defiant_logo.png" alt="DeFiant Logo" width="120" />
+</p>
+
 # DeFiant
 
 **Defiant** is a crypto portfolio assistant designed to help beginners make smarter, safer financial decisions in the world of crypto.
