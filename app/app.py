@@ -4,7 +4,7 @@ import json
 # from services.tokens import tokens
 
 app = Flask(__name__)
-app.debug = True
+
 
 @app.route('/')
 def index():
@@ -23,26 +23,26 @@ def submit_address():
     # Create WalletQuery instance
     wallet = WalletQuery(ethereum_address, tokens=tokens)
     
-    try:
-        # Fetch wallet balance data
-        wallet_data = wallet.fetch_web3_data()
-        
-        # Parse the JSON string back to a dictionary
-        if wallet_data:
-            wallet_data = json.loads(wallet_data)
-        else:
-            wallet_data = {"error": "No data found"}
-            
-        # Fetch transaction history (limit to recent transactions)
-        # Combine data
-        response_data = {
-            "wallet": wallet_data,
-        }
-        
-        return jsonify(response_data)
+    # try:
+    # Fetch wallet balance data
+    wallet_data = wallet.fetch_web3_data()
     
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    # Parse the JSON string back to a dictionary
+    if wallet_data:
+        wallet_data = json.loads(wallet_data)
+    else:
+        wallet_data = {"error": "No data found"}
+        
+    # Fetch transaction history (limit to recent transactions)
+    # Combine data
+    response_data = {
+        "wallet": wallet_data,
+    }
+    
+    return jsonify(response_data)
+    
+    # except Exception as e:
+    #     return jsonify({"error": str(e)}), 500
 
 @app.route('/ask_question', methods=['POST'])
 def ask_question():
