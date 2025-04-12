@@ -1,20 +1,39 @@
-import feedparser
+import requests
+from bs4 import BeautifulSoup
 from datetime import datetime
 
 def fetch_crypto_news():
-    # Use BBC RSS feed—for example, business news (adjust URL if needed)
-    feed_url = "http://feeds.bbci.co.uk/news/business/rss.xml"
-    feed = feedparser.parse(feed_url)
-    news_items = []
+    url = "https://www.coindesk.com/latest-crypto-news"
+    response = requests.get(url)
     
-    for entry in feed.entries:
-        pub_date = datetime(*entry.published_parsed[:6]).strftime('%b %d')
-        news_items.append({
-            'date': pub_date,
-            'title': entry.title,
-            'link': entry.link,
-            'description': entry.summary
-        })
+    if response.status_code != 200:
+        return []
 
-    # Optionally, sort by date or limit to a set number of items
+    soup = BeautifulSoup(response.text, 'html.parser')
+    stories = soup.find_all('div', class_='bg-white flex gap-6 w-full shrink justify-between')
+    
+    news_items = []
+    for story in stories:
+        title_tag = story.find('h2', class_='font-headline-xs font-normal')
+        link_tag = story.find('a', class_='text-color-charcoal-900 mb-4 hover:underline')
+        time_tag = story.find('span', class_='font-metadata text-color-charcoal-600 uppercase')
+        
+        if title_tag and link_tag and time_tag:
+            title = title_tag.get_text(strip=True)
+            link = link_tag['href']
+            date = time_tag.get_text(strip=True)
+            
+            try:
+                if 'minute' in date.lower() or 'hour' in date.lower():
+                    date = datetime.now().strftime('%b %d')
+            except:
+                date = datetime.now().strftime('%b %d')
+            
+            news_items.append({
+                'date': date,
+                'title': title,
+                'link': 'https://www.coindesk.com' + link,
+                'description': ''
+            })
+    
     return news_items[:5]
