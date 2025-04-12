@@ -14,36 +14,46 @@ ERC20_ABI = [
         "inputs": [{"name": "_owner", "type": "address"}],
         "name": "balanceOf",
         "outputs": [{"name": "balance", "type": "uint256"}],
-        "type": "function"
+        "type": "function",
     },
     {
         "constant": True,
         "inputs": [],
         "name": "decimals",
         "outputs": [{"name": "", "type": "uint8"}],
-        "type": "function"
-    }
+        "type": "function",
+    },
 ]
+
 
 # takes in wallet address, question? and list of tokens addresses
 class WalletQuery:
-    def __init__(self, wallet_address: str, tokens = [], question: str = "",debug: bool = False):
+    def __init__(
+        self, wallet_address: str, tokens=[], question: str = "", debug: bool = False
+    ):
         self.wallet_address = wallet_address
         self.question = question
 
         if debug:
             self.etherscan_api = "https://api-sepolia.etherscan.io/api?"
             self.infura_url = "https://ethereum-sepolia-rpc.publicnode.com"
+            self.alchemy_api = (
+                f"https://eth-sepolia.g.alchemy.com/v2/{os.getenv("ALCHEMY")}"
+            )
         else:
             self.etherscan_api = "https://api.etherscan.io/api?"
             self.infura_url = (
                 "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
+            )
+            self.alchemy_api = (
+                f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv("ALCHEMY")}"
             )
 
         self.tokens = tokens
         self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
 
     def fetch_web3_data(self):
+        print("TESTING")
         if not self.web3.is_connected():
             print("Failed to connect to the Ethereum network.")
             return
@@ -56,25 +66,55 @@ class WalletQuery:
 
             response = {"ETH Balance": eth_balance}
 
+            payload = {
+                "jsonrpc": "2.0",
+                "method": "alchemy_getTokenBalances",
+                "params": [self.wallet_address, "erc20"],
+                "id": 1,
+            }
+
+            headers = {"Content-Type": "application/json"}
+
+            erc20_response = (
+                requests.post(
+                    self.alchemy_api, data=json.dumps(payload), headers=headers
+                )
+                # .raise_for_status()
+                .json()
+            )
+
+            print(erc20_response)
+
             # Fetch balances for each ERC-20 token
             token_balances = {}
 
-            tokens = [t for t in self.tokens if t in TOKEN_ADDRESSES]
-            
-            for token_name in tqdm(tokens):
-                if token_name not in TOKEN_ADDRESSES:
-                    print(f"Token {token_name} is not in the predefined list.")
-                    continue
-                # Fetch token balance using the token address
-                token_address = TOKEN_ADDRESSES[token_name]
-                token_balance = self.get_erc20_balance(
-                    self.web3, self.wallet_address, token_address
-                )
+            for token in erc20_response["result"]["tokenBalances"]:
+                hex_balance = token["tokenBalance"]
+                if (
+                    hex_balance
+                    != "0x0000000000000000000000000000000000000000000000000000000000000000"
+                ):
+                    token_address = token["contractAddress"]
+                    print(token_address)
+                    print(hex_balance)
+                    # Get token metadata to properly format balance
+                    metadata = get_token_metadata(token_address, api_key)
+                    decimals = int(
+                        metadata.get("decimals", 18)
+                    )  # Default to 18 decimals if not found
 
-                if token_balance:
-                    token_balances[token_address] = token_balance
+                    print(decimals)
+
+                    # Convert hex balance to decimal
+                    balance_int = int(hex_balance, 16)
+                    formatted_balance = balance_int / (10**decimals)
+
+                    print(formatted_balance)
+
+                    token_balances[token_address] = formatted_balance
 
             if token_balances:
+                print(token_balances)
                 response["ERC-20 Token Balances"] = token_balances
             print(response)
 
@@ -95,6 +135,25 @@ class WalletQuery:
             print(
                 "Invalid input. Please enter a valid Ethereum address or transaction hash."
             )
+
+    def get_token_metadata(token_address, api_key):
+        payload = {
+            "jsonrpc": "2.0",
+            "method": "alchemy_getTokenMetadata",
+            "params": [token_address],
+            "id": 1,
+        }
+
+        headers = {"Content-Type": "application/json"}
+
+        try:
+            response = requests.post(
+                self.alchemy_api, data=json.dumps(payload), headers=headers
+            )
+            data = response.json()
+            return data.get("result", {})
+        except:
+            return {}
 
     def fetch_web3_history(self):
         API_KEY = os.getenv("ETHER_SCAN")
@@ -133,8 +192,8 @@ class WalletQuery:
 if __name__ == "__main__":
     # address = "0x3Dd5A3bbF75acaFd529E1ddB12B9463C0C0350dE"
     address = "0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97"
-    WalletQuery = WalletQuery(address, tokens = tokens)
- 
+    WalletQuery = WalletQuery(address, tokens=tokens)
+
     print(WalletQuery.fetch_web3_data())
 
     # print(WalletQuery.fetch_web3_history())
