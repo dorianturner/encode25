@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from services.wallet_fetcher import WalletQuery
+from services.wallet_fetcher import WalletQuery, TOKEN_ADDRESSES
 import json
 # from services.tokens import tokens
 
@@ -42,7 +42,7 @@ def submit_address():
     #     return jsonify({"error": str(e)}), 500
 
 @app.route('/ask_question', methods=['POST'])
-def ask_question():
+async def ask_question():
     if not request.is_json:
         return jsonify({"error": "Request must be JSON"}), 400
         
@@ -53,30 +53,20 @@ def ask_question():
     if not question:
         return jsonify({"error": "No question provided"}), 400
     
-    responses = {
-        "risk": {
-            "badge_text": "Moderate Risk",
-            "text": "Your risk level on protocol X is moderate...",
-            "buttons": [
-                {"type": "primary", "text": "Show recommendations"},
-                {"type": "default", "text": "Learn more"}
-            ]
-        },
-        "default": {
-            "text": "I can help you analyze your DeFi portfolio...",
-            "buttons": [
-                {"type": "default", "text": "View suggestions"}
-            ]
-        }
-    }
     
-    response_key = "default"
-    if "risk" in question:
-        response_key = "risk"
-    elif any(term in question for term in ["apy", "yield", "interest", "earn"]):
-        response_key = "yield"
+    wallet = wallet_fetcher.WalletQuery(
+        wallet_address=address,
+        tokens=data.get('tokens'),
+        question=question,
+        debug=True
+    )
     
-    return jsonify(responses[response_key])
+    #THIS WOKRS:
+    result = await insight_engine.analyze_wallet(wallet)
+    #this doesnt work
+    #result = await insight_engine.stream_output(wallet)
+    return jsonify({"response":result.get('response')})
+   # return jsonify({"response": "hello world"})
 
 if __name__ == '__main__':
     app.run(debug=True)

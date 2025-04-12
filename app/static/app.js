@@ -256,25 +256,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     address: sessionStorage.getItem('current_address') || ''
                 })
             });
-            
-            if (!response.ok) throw new Error('Request failed');
-            
+        
+            console.log("Raw response object:", response);
+        
+            if (!response.ok) {
+                const errorText = await response.text(); // Read raw error
+                throw new Error(`Request failed (${response.status}): ${errorText}`);
+            }
+        
             const data = await response.json();
+            console.log("Received data:", data);
             
-            // Display the response exactly as received from backend
-            answerBox.innerHTML = `
-                ${data.badge_text ? `<div class="badge badge-warning">${data.badge_text}</div>` : ''}
-                <div class="answer-text">${data.text}</div>
-                ${data.buttons ? `
-                    <div class="button-group">
-                        ${data.buttons.map(btn => 
-                            `<button class="btn btn-${btn.type}">${btn.text}</button>`
-                        ).join('')}
-                    </div>
-                ` : ''}
-            `;
+            answerBox.innerHTML = `<div class="answer-text">${data.response}</div>`;
+
+        
+      
             
         } catch (error) {
+            console.log('Error:', error);
             answerBox.innerHTML = '<div class="error">Failed to get response. Please try again.</div>';
             console.error('Error:', error);
         }
