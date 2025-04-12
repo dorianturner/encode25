@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         // Calculate total value
-        totalValue += ethValue * mockPrices['ETH'];
+        // totalValue += ethValue * mockPrices['ETH'];
 
         // Create HTML for portfolio items
         let portfolioHTML = '';
@@ -143,8 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const tokenBalances = walletData['ERC-20 Token Balances'];
             // Create a mapping of addresses to token names
 
-            for (const [address, balance, tokenName, tokenSymbol, logoURL] of tokenBalances) {
-                console.log(address + " " + balance + " " + tokenName + " " + tokenSymbol + " " + logoURL);
+            for (const [address, balance, tokenName, tokenSymbol, logoURL, price] of tokenBalances) {
+                console.log(address + " " + balance + " " + tokenName + " " + tokenSymbol + " " + logoURL + " " + price);
                 const tokenValue = balance * (mockPrices[address] || 0);
                 totalValue += tokenValue;
 
@@ -159,7 +159,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="asset-symbol">${tokenSymbol}</div>
                             </div>
                         </div>
-                        <div class="asset-amount">${parseFloat(balance).toFixed(2)} ${tokenSymbol}</div>
+                        <div>
+                            <div class="asset-amount">${parseFloat(balance).toFixed(2)} ${tokenSymbol}</div>
+                            <div class="asset-price">\$${price}</div>
+                        </div>
                     </div>
                 `;
             }

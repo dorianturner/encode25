@@ -302,6 +302,13 @@ input[type="text"]:focus {
 .asset-amount {
     color: var(--text-color);
     font-weight: 600;
+    text-align: right;
+}
+
+.asset-price {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-align: right;
 }
 
 .assistant-section {

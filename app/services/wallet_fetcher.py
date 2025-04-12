@@ -41,7 +41,6 @@ class WalletQuery:
             balance = self.web3.eth.get_balance(self.wallet_address)
             # convert to float to allow json serialization
             eth_balance = float(self.web3.from_wei(balance, "ether"))
-
             response = {"ETH Balance": eth_balance}
 
             payload = {
@@ -53,9 +52,7 @@ class WalletQuery:
 
             headers = {"Content-Type": "application/json"}
 
-            erc20_response = requests.post(
-                self.alchemy_api, json=payload, headers=headers
-            ).json()
+            erc20_response = requests.post(self.alchemy_api, json=payload, headers=headers).json()
 
             tokens = [
                 token
@@ -71,14 +68,17 @@ class WalletQuery:
 
                 metadata_results = await asyncio.gather(*tasks)
 
+            coingecko_ids = ",".join(map(lambda x: x["name"].lower().replace(" ", "-"), metadata_results))
+            url = "https://api.coingecko.com/api/v3/simple/price"
+            params = {"ids": "ethereum," + coingecko_ids, "vs_currencies": "usd"}
+            usd_prices = requests.get(url, params = params).json()
             token_balances = []
 
             for token, metadata in zip(tokens, metadata_results):
                 token_address = token["contractAddress"]
                 hex_balance = token["tokenBalance"]
-                meta = metadata
 
-                decimals = meta.get("decimals")
+                decimals = metadata.get("decimals")
 
                 if decimals is None:
                     decimals = 18
@@ -86,15 +86,16 @@ class WalletQuery:
                     decimals = int(decimals)
 
                 balance_int = int(hex_balance, 16)
-
+                coingecko_id = metadata["name"].lower().replace(" ", "-")
                 formatted_balance = balance_int / (10**decimals)
                 token_balances.append(
                     (
                         token_address,
                         formatted_balance,
-                        meta.get("name"),
-                        meta.get("symbol"),
-                        meta.get("logo"),
+                        metadata.get("name"),
+                        metadata.get("symbol"),
+                        metadata.get("logo"),
+                        usd_prices[coingecko_id]["usd"]
                     )
                 )
 
