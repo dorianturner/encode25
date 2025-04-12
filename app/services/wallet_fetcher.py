@@ -28,17 +28,15 @@ class WalletQuery:
     ):
         self.wallet_address = wallet_address
         self.question = question
-        self.alchemy_api = f"https://eth-sepolia.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
 
         if debug:
             self.etherscan_api = "https://api-sepolia.etherscan.io/api?"
             self.infura_url = "https://ethereum-sepolia-rpc.publicnode.com"
-
+            self.alchemy_api = f"https://eth-sepolia.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
         else:
             self.etherscan_api = "https://api.etherscan.io/api?"
-            self.infura_url = (
-                "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
-            )
+            self.infura_url = "https://mainnet.infura.io/v3/d65cc6290ab748b7a979ea98b59d54f8"
+            self.alchemy_api = f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
 
         self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
 
