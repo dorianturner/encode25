@@ -140,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add ERC-20 tokens if available
         if (walletData['ERC-20 Token Balances']) {
             const tokenBalances = walletData['ERC-20 Token Balances'];
+            console.log(tokenBalances);
 
             // Create a mapping of addresses to token names
             const addressToName = {};
@@ -147,9 +148,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 addressToName[address] = name;
             }
 
-            for (const [address, balance] of Object.entries(tokenBalances)) {
-                const tokenName = addressToName[address] || 'Unknown Token';
-                const tokenSymbol = addressToName[address] || 'UNKNOWN';
+            for (const [address, [balance, name, logo]] of Object.entries(tokenBalances)) {
+                console.log(balance + " " + name + " " + logo);
+                const tokenName = name;
+                const tokenSymbol = name;
 
                 const tokenValue = balance * (mockPrices[address] || 0);
                 totalValue += tokenValue;
@@ -165,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div class="asset-symbol">${tokenSymbol}</div>
                             </div>
                         </div>
-                        <div class="asset-amount">${parseFloat(balance).toFixed(2)} ${tokenSymbol}</div>
+                        <div class="asset-amount">${parseFloat(balance).toFixed(2)}</div>
                     </div>
                 `;
             }

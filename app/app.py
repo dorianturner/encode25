@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from services.wallet_fetcher import WalletQuery, TOKEN_ADDRESSES
+from services.wallet_fetcher import WalletQuery
 import json
 # from services.tokens import tokens
 
@@ -18,10 +18,7 @@ def submit_address():
         return jsonify({"error": "No Ethereum address provided"}), 400
     
     # Default to these common tokens
-    tokens = ["ETH", "USDT", "BNB", "USDC", "STETH", "WBTC", "LEO", "LINK", "TON", "SHIB", "USDS", "WSTETH", "OM", "BGB", "USDE", "WETH", "WBT", "WEETH", "OKB", "UNI", "DAI", "CBBTC", "PEPE", "ONDO", "GT", "NEAR", "TKX", "SUSDS", "BUIDL", "CRO", "MNT", "SUSDE", "AAVE", "RENDER", "ENA", "FDUSD", "LBTC", "FTN", "POL", "ARB", "SOLVBTC", "FET", "MKR", "NEXO", "BONK", "QNT", "WLD", "RSETH", "DEXE", "PYUSD", "MOVE", "INJ", "XAUT", "CRV", "GRT", "RETH", "IMX", "XSOLVBTC", "PAXG", "USD0", "XCN", "LDO", "JASMY", "SAND", "GALA", "USDX", "METH", "BTT", "CAKE", "FLOKI", "PENDLE", "TUSD", "PUMPBTC", "ENS", "MANA", "SPX", "TEL", "USDY", "RSR", "CLBTC", "NFT", "USYC", "OUSG", "STRK", "USR", "AXS", "TBTC", "CMETH", "CHZ", "OHM", "COMP", "VIRTUAL", "APE", "W", "BEAM", "OSETH", "PLUME", "MATIC", "FRAX", "USDD"]
-    
-    # Create WalletQuery instance
-    wallet = WalletQuery(ethereum_address, tokens=tokens)
+    wallet = WalletQuery(ethereum_address)
     
     # try:
     # Fetch wallet balance data
