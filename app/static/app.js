@@ -223,53 +223,16 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
-
-    // Handle question submission (no streaming)
-
-    // Handle question submission
     document.getElementById('question-form').addEventListener('submit', async function(e) {
         e.preventDefault();
         const questionInput = document.getElementById('question-input');
         const answerBox = document.getElementById('answer-box');
         const question = questionInput.value.trim();
         if (!question) return;
-
+    
         // Show loading state
         answerBox.innerHTML = '<div class="loading-spinner"></div>';
-
-        // try {
-        //     // Send to backend
-        //     const response = await fetch('/api/ask_question_stream', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         },
-        //         body: JSON.stringify({
-        //             question: question,
-        //             address: sessionStorage.getItem('current_address') || ''
-        //         })
-        //     });
-
-        //     console.log("Raw response object:", response);
-
-        //     if (!response.ok) {
-        //         const errorText = await response.text(); // Read raw error
-        //         throw new Error(`Request failed (${response.status}): ${errorText}`);
-        //     }
-
-        //     const data = await response.json();
-        //     console.log("Received data:", data);
-
-        //     answerBox.innerHTML = `<div class="answer-text">${data.response}</div>`;
-
-
-        // } catch (error) {
-        //     console.log('Error:', error);
-        //     answerBox.innerHTML = '<div class="error">Failed to get response. Please try again.</div>';
-        //     console.error('Error:', error);
-        // }
-
-        // dubious
+    
         try {
             // Send to backend
             const response = await fetch('/api/ask_question_stream', {
@@ -282,43 +245,65 @@ document.addEventListener('DOMContentLoaded', function() {
                     address: sessionStorage.getItem('current_address') || ''
                 })
             });
-
+    
             if (!response.ok || !response.body) {
                 const errorText = await response.text();
                 throw new Error(`Request failed (${response.status}): ${errorText}`);
             }
-
+    
+            // Ensure marked.js is loaded
+            const ensureMarkedLoaded = () => {
+                return new Promise((resolve) => {
+                    if (typeof marked !== 'undefined') {
+                        resolve();
+                    } else {
+                        const script = document.createElement('script');
+                        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js';
+                        script.onload = () => resolve();
+                        document.head.appendChild(script);
+                    }
+                });
+            };
+    
+            // Wait for marked.js to load
+            await ensureMarkedLoaded();
+    
+            // Create a container for the streamed content
+            answerBox.innerHTML = '<div class="answer-text markdown-content"></div>';
+            const answerText = answerBox.querySelector('.answer-text');
+    
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
-            let result = '';
-
+            let accumulatedText = '';
+            
             // Read and stream the response
             while (true) {
                 const { value, done } = await reader.read();
                 if (done) break;
-
+                
+                // Decode and add to accumulated text
                 const chunk = decoder.decode(value, { stream: true });
-                result += chunk;
-
-                // Optionally: parse for specific structure if JSON chunks are emitted
-                answerBox.innerHTML = `<div class="answer-text">${result}</div>`;
+                accumulatedText += chunk;
+                
+                // Render accumulated text as markdown
+                answerText.innerHTML = marked.parse(accumulatedText);
+                
+                // Optional: highlight code blocks if you're using highlight.js
+                if (typeof hljs !== 'undefined') {
+                    answerText.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightElement(block);
+                    });
+                }
+                
+                // Scroll to the bottom as new content arrives
+                answerText.scrollTop = answerText.scrollHeight;
             }
-
+    
         } catch (error) {
             console.log('Error:', error);
             answerBox.innerHTML = '<div class="error">Failed to get response. Please try again.</div>';
         }
-
-
-
     });
-
-
-
-
-
-
-
 
     // Add event listener for window resize to adjust heights
     window.addEventListener('resize', adjustPortfolioHeight);
