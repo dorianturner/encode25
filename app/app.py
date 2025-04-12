@@ -5,6 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from fastapi.responses import StreamingResponse
 from services.wallet_fetcher import WalletQuery
 from services import insight_engine
+from services.news import fetch_crypto_news
 import json
 # from services.tokens import tokens
 
@@ -13,7 +14,9 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    news_items = fetch_crypto_news()
+    return render_template('index.html', news_items=news_items)
+
 
 @app.route('/submit_address', methods=['POST'])
 async def submit_address():

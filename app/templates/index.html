@@ -79,29 +79,17 @@
                 
                 <!-- News section (Bottom middle) -->
                 <div class="card news-section">
-                    <h2>DeFi News</h2>
+                    <h2>Latest News</h2>
                     <div class="news-container">
+                        {% for item in news_items %}
                         <div class="news-item">
-                            <div class="news-date">APR 12</div>
+                            <div class="news-date">{{ item.date }}</div>
                             <div class="news-content">
-                                <h3>Ethereum Layer 2 Solutions See Record Growth</h3>
-                                <p>Transaction volume on Layer 2 networks has surpassed 2.5M ETH this month.</p>
+                                <h3><a href="{{ item.link }}" target="_blank">{{ item.title }}</a></h3>
+                                <p>{{ item.description }}</p>
                             </div>
                         </div>
-                        <div class="news-item">
-                            <div class="news-date">APR 10</div>
-                            <div class="news-content">
-                                <h3>New DeFi Protocol Launches with $30M TVL</h3>
-                                <p>Innovative yield aggregator attracts significant liquidity within 24 hours.</p>
-                            </div>
-                        </div>
-                        <div class="news-item">
-                            <div class="news-date">APR 08</div>
-                            <div class="news-content">
-                                <h3>Regulatory Clarity Coming for Stablecoins</h3>
-                                <p>New framework expected to provide clearer guidelines for stablecoin issuers.</p>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
