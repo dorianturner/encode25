@@ -5,12 +5,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to adjust chart container dimensions dynamically
     function adjustChartContainer() {
+        const newsSection = document.querySelector('.news-section');
         const graphSection = document.querySelector('.graph-section');
         const performanceChart = document.querySelector('.performance-chart');
         const distributionChart = document.querySelector('.distribution-chart');
 
-        if (graphSection) {
-            const graphHeight = graphSection.clientHeight;
+        if (graphSection && newsSection) {
+            const newsWidth = newsSection.offsetWidth;
+            graphSection.style.width = `${newsWidth}px`;
+            const graphHeight = graphSection.offsetHeight;
             if (performanceChart) performanceChart.style.height = `${graphHeight*0.7}px`;
             if (distributionChart) distributionChart.style.height = `${graphHeight*0.7}px`;
         }
