@@ -10,7 +10,7 @@ Defiant is a crypto portfolio assistant designed to help beginners safely explor
 
 ## 🚀 Quickstart
 
-1. **Open the app**: [Click here to access the app](https://defiant-10531713115.europe-west2.run.app/) or type defiant-ai.me into your browser
+1. **Open the app**: [Click here to access the app](https://defiant-10531713115.europe-west2.run.app/) or type https://defiant-10531713115.europe-west2.run.app/ into your browser
 2. **Enter your wallet address**: Type it in and press **Enter**. e.g. 0xeA4DA3F9BAb091Eb86921CA6E41712438f4E5079
 3. **View your portfolio**: Get a clear breakdown of your assets and their performance.
 4. **Ask questions**: Use the AI assistant to learn more about your holdings, crypto terms, or anything else.
