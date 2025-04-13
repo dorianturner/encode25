@@ -1,17 +1,10 @@
-from openai import OpenAI, AsyncOpenAI
-from fastapi import FastAPI,Request
+from openai import OpenAI
 import openai
 import asyncio
 import json
 from services import wallet_fetcher
 from services import data_sources
 import os
-import time
-from itertools import islice
-import langchain
-from langchain.prompts import PromptTemplate
-from langchain_core.runnables import RunnableLambda
-from langchain.chains.sequential import SequentialChain
 
 # api keys
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -60,10 +53,6 @@ async def get_stream(wallet_query: wallet_fetcher.WalletQuery):
     def summarize(data, max_chars=1500):
         text = json.dumps(data, indent=2)
         return text[:max_chars] + ("\n...[truncated]" if len(text) > max_chars else "")
-
-    from pprint import pprint
-    pprint(wallet_summary)
-    input()
 
     prompt = f"""
         You are an AI assistant helping a beginner crypto user make informed, responsible decisions about their wallet activity.

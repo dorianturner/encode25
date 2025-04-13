@@ -11,7 +11,7 @@ def fetch_crypto_news():
 
     soup = BeautifulSoup(response.text, 'html.parser')
     stories = soup.find_all('div', class_='bg-white flex gap-6 w-full shrink justify-between')
-    
+
     news_items = []
     for story in stories:
         title_tag = story.find('h2', class_='font-headline-xs font-normal')

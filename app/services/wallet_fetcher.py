@@ -1,11 +1,9 @@
 import requests
 from web3 import Web3
-import json
 import os
 import asyncio
 import aiohttp
 from itertools import islice
-import time
 
 def batched(iterable, n):
     """Batch data into tuples of length n. The last batch may be shorter."""
@@ -116,7 +114,6 @@ class WalletQuery:
                     price_data = await response.json()
                     return price_data["data"]
             
-            start = time.time()
             print("Started")
 
             async with aiohttp.ClientSession() as session:
@@ -162,8 +159,7 @@ class WalletQuery:
                     )
                 )
 
-            # response["ETH"] = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd").json()["ethereum"]["usd"]
-            response["ETH"] = 1600
+            response["ETH"] = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd").json()["ethereum"]["usd"]
             if token_balances:
                 response["ERC-20 Token Balances"] = sorted(
                     token_balances, key=lambda x: float(x[-1]), reverse=True
@@ -229,22 +225,14 @@ class WalletQuery:
         url = f"{self.covalent_api}/{self.wallet_address}/portfolio_v2/"
 
         headers = {"Authorization": f"Bearer {API_KEY}"}
-        start = time.time()
-        print("Before request")
         response = requests.get(url, headers=headers).json()
-        print("After request:", time.time() - start)
         data = []
-
-        start = time.time()
-        print("Before loop")
 
         for item in response["data"]["items"]:
             for holding in item["holdings"]:
                 date = holding["timestamp"][:10]  # Just get YYYY-MM-DD
                 value = holding["close"]["quote"]
                 data.append({"date": date, "value": value})
-
-        print("End of loop:", time.time() - start)
 
         return sorted(data, key=lambda x: x["date"])
 

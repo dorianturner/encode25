@@ -120,34 +120,3 @@ def fetch_all_data(etherscan_api_key, tokens=None):
         "gas_oracle": gas_data,
         "estimated_confirmation_time": estimated_time
     }, indent=2)
-
-# if __name__ == "__main__":
-#     etherscan_api_key = "44UC4DPSTC296FKCM5CRI6D6C36YVMAN6R"
-
-#     market_values = fetch_current_market_values()
-#     print("Market Values:")
-#     if isinstance(market_values, list):
-#         for symbol, price in market_values:
-#             print(f"{symbol}: ${price:.2f}")
-#     else:
-#         print(market_values)
-
-#     gas_data = fetch_gas_oracle(etherscan_api_key)
-#     print("\nGas Oracle Data:")
-#     if isinstance(gas_data, dict):
-#         for key, value in gas_data.items():
-#             unit = " Gwei" if key != "gas_used_ratio" else ""
-#             print(f"{key.capitalize()}: {value}{unit}")
-#     else:
-#         print(gas_data)
-
-#     if isinstance(gas_data, dict):
-#         proposed_gas_wei = int(gas_data["proposed"] * 1e9)
-#         estimated_time = estimate_transaction_time(etherscan_api_key, proposed_gas_wei)
-#         print(f"\nEstimated confirmation time for {gas_data['proposed']} Gwei: {estimated_time} seconds")
-#     else:
-#         print("\nGas oracle data unavailable; cannot estimate transaction time.")
-
-
-#     all_data = fetch_all_data(etherscan_api_key)
-#     print(f"\nAll Data: {all_data}")
