@@ -350,7 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!question) return;
     
         // Show loading state
-        answerBox.innerHTML = '<div class="loading-spinner"></div>';
+        answerBox.innerHTML = '<div class="spinner loading"></div>';
     
         try {
             // Send to backend
