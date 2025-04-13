@@ -124,27 +124,33 @@ async def get_stream(wallet_query: wallet_fetcher.WalletQuery):
 
 
     prompt = f"""
-    Wallet Summary:
-    {summarize(wallet_summary)}
-    
-    Recent Transactions (last 5):
-    {', '.join([f'{t["hash"]} ({t["blockNumber"]})' for t in wallet_transaction_history])}
-    
-    External Data:
-    {summarize(external_data)}
-    
+        You are an AI assistant helping a beginner crypto user understand and improve their wallet performance.
+        Based on the information below, provide a simple, beginner-friendly explanation with actionable insights.
 
-    Question: {wallet_query.question}
-    Take into account the following:
-    - the given external data
-    - the recent transactions
-    - the wallet summary
-    - the tokens in the wallet (recommend what other tokens it should invest in)
-    TAKE into account past transactions and the current market trends.
-    - Provide a detailed analysis of the wallet's performance and suggest improvements.
-    Do not output the ETH balance or the market values, 
-    but mention gas fees and the transaction history. 
+        Wallet Summary:
+        {summarize(wallet_summary)}
+
+        Recent Transactions (last 5):
+        {', '.join([f'{t["hash"]} (Block #{t["blockNumber"]})' for t in wallet_transaction_history])}
+
+        External Market & Risk Data:
+        {summarize(external_data)}
+
+        User Question:
+        {wallet_query.question}
+
+        Your Tasks (ranked by importance):
+        1. Analyze past transactions for gas fees, patterns, and any signs of risk or inefficiency.
+        2. Provide a clear, beginner-safe analysis of the wallet’s overall health and performance.
+        3. Suggest safer token diversification options aligned with market trends and portfolio history (avoid hype-driven suggestions).
+        4. Recommend improvements that focus on learning, reducing risk, and avoiding common beginner mistakes.
+
+        Important Notes:
+        - Do not mention ETH balance or token market values directly.
+        - Focus on clarity, simplicity, and educational value.
+        - Prioritize suggestions that help prevent impulsive decisions and promote long-term understanding.
     """
+
     
     # Retry logic with exponential backoff
 

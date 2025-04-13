@@ -3,8 +3,34 @@
 </p>
 
 # DeFiant
+- **DeFiant** is an AI-powered autonomous agent that transforms how users interact with DeFi.
+  - Provides personalized, real-time portfolio analysis through a seamless experience.
+  - Users simply input their Ethereum wallet address—no extensions, no fuss.
+  - Instantly receive a comprehensive overview of holdings, transaction history, and token distribution.
 
-**Defiant** is a crypto portfolio assistant designed to help beginners make smarter, safer financial decisions in the world of crypto.
+- **Powered by GPT-4o** and enhanced with LangChain agents:
+  - Integrates on-chain data from **Etherscan** and **Alchemy** with off-chain insights like token trends and market conditions.
+  - DeFiant intelligently interprets data to generate natural language responses.
+  - Offers clear, contextual guidance tailored to the user’s asset mix and activity.
+
+- **In a rapidly changing DeFi landscape**, making sense of wallets, risks, and investment opportunities can be overwhelming.
+  - **DeFiant** steps in as a real-time **AI portfolio advisor**.
+  - Always helps contextualize wallet data, visualize diversification and performance, and offer actionable advice.
+
+- **With clear summaries and dynamic charts**, users can:
+  - Easily see the spread of their assets, risk exposure, and transaction costs, all explained in plain, easy language.
+  - Identify stablecoins, surface hidden gas fees, and recommend better strategies.
+
+- **Empowers users** to make smarter, faster decisions:
+  - Users can ask open-ended questions like “What should I do?” or “Where am I exposed?”
+  - Receive intelligent, data-driven insights instantly.
+
+- **Designed for simplicity, transparency, and power**:
+  - Bridges the gap between complex DeFi data and human decision-making.
+  - Makes understanding Web3 assets as easy as typing a question.
+  - Unlocks the true potential of AI-driven finance, so you can be **DeFiant every step of the way**.
+
+
 
 ---
 

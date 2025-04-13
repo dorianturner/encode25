@@ -18,7 +18,7 @@ class WalletQuery:
             self.alchemy_api = (
                 f"https://eth-sepolia.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
             )
-            self.covalent_api = "https://api.covalenthq.com/v1/eth-sepolia/address/"
+            self.covalent_api = "https://api.covalenthq.com/v1/eth-sepolia/address"
         else:
             self.etherscan_api = "https://api.etherscan.io/api?"
             self.infura_url = (
@@ -27,7 +27,7 @@ class WalletQuery:
             self.alchemy_api = (
                 f"https://eth-mainnet.g.alchemy.com/v2/{os.getenv('ALCHEMY')}"
             )
-            self.covalent_api = "https://api.covalenthq.com/v1/eth-mainnet/address/"
+            self.covalent_api = "https://api.covalenthq.com/v1/eth-mainnet/address"
 
         self.web3 = Web3(Web3.HTTPProvider(self.infura_url))
 
@@ -41,7 +41,11 @@ class WalletQuery:
             balance = self.web3.eth.get_balance(self.wallet_address)
             # convert to float to allow json serialization
             eth_balance = float(self.web3.from_wei(balance, "ether"))
-            response = {"ETH Balance": eth_balance}
+
+            response = {
+                "ETH Balance": eth_balance,
+                "historical_data": self.fetch_web3_value_history(),
+            }
 
             payload = {
                 "jsonrpc": "2.0",

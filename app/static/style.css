@@ -159,6 +159,17 @@ h1 {
     overflow: hidden;
 }
 
+.graph-placeholder {
+    width: 100%;
+    height: calc(100% - 40px); /* Subtract header height */
+    position: relative;
+}
+
+#myChart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
 .card {
     background: var(--card-bg);
     border-radius: var(--radius);

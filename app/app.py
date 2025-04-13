@@ -45,6 +45,10 @@ async def submit_address():
     }
     
     return jsonify(response_data)
+    
+
+fastapi_app = FastAPI()
+
 
 @fastapi_app.post("/ask_question_stream")
 async def ask_question_stream(question_data: dict):
