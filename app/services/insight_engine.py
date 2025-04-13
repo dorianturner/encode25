@@ -61,13 +61,16 @@ async def get_stream(wallet_query: wallet_fetcher.WalletQuery):
         text = json.dumps(data, indent=2)
         return text[:max_chars] + ("\n...[truncated]" if len(text) > max_chars else "")
 
+    from pprint import pprint
+    pprint(wallet_summary)
+    input()
 
     prompt = f"""
         You are an AI assistant helping a beginner crypto user make informed, responsible decisions about their wallet activity.
 
         Inputs:
         - Wallet Summary:
-        {summarize(wallet_summary)}
+        {wallet_summary['ERC-20 Token Balances']}
 
         - Recent Transactions (last 5):
         {', '.join([f'{t["hash"]} (Block #{t["blockNumber"]})' for t in wallet_transaction_history])}
@@ -88,9 +91,6 @@ async def get_stream(wallet_query: wallet_fetcher.WalletQuery):
         Do not speculate or add information beyond what’s relevant to the question.
     """
 
-
-
-    
     # Retry logic with exponential backoff
 
     stream = client.chat.completions.create(
@@ -103,73 +103,73 @@ async def get_stream(wallet_query: wallet_fetcher.WalletQuery):
 
     return stream
 
-    wallet_summary = await wallet_query.fetch_web3_data()
-    wallet_transaction_history, external_data = await fetch_concurrently(wallet_query)
-    wallet_transaction_history = wallet_transaction_history["transactions"][-5:]
+    # wallet_summary = await wallet_query.fetch_web3_data()
+    # wallet_transaction_history, external_data = await fetch_concurrently(wallet_query)
+    # wallet_transaction_history = wallet_transaction_history["transactions"][-5:]
     
-    def summarize(data, max_chars=1500):
-        text = json.dumps(data, indent=2)
-        return text[:max_chars] + ("\n...[truncated]" if len(text) > max_chars else "")
+    # def summarize(data, max_chars=1500):
+    #     text = json.dumps(data, indent=2)
+    #     return text[:max_chars] + ("\n...[truncated]" if len(text) > max_chars else "")
     
-    # Step 1: Get wallet summary
-    summarize_prompt = f"""Summarize this Ethereum wallet and its 5 most recent transactions.
-    Wallet Summary:
-    {summarize(wallet_summary)}
-    Transactions:
-    {json.dumps(wallet_transaction_history)}
-    """
+    # # Step 1: Get wallet summary
+    # summarize_prompt = f"""Summarize this Ethereum wallet and its 5 most recent transactions.
+    # Wallet Summary:
+    # {summarize(wallet_summary)}
+    # Transactions:
+    # {json.dumps(wallet_transaction_history)}
+    # """
     
-    print("-1")
+    # print("-1")
     
-    # Call the OpenAI API for the summary
-    summary_response = await openai.Completion.acreate(
-        model="gpt-4o-mini",
-        prompt=summarize_prompt,
-        max_tokens=150,
-        temperature=0.7
-    )
-    summary = summary_response.choices[0].text.strip()
+    # # Call the OpenAI API for the summary
+    # summary_response = await openai.Completion.acreate(
+    #     model="gpt-4o-mini",
+    #     prompt=summarize_prompt,
+    #     max_tokens=150,
+    #     temperature=0.7
+    # )
+    # summary = summary_response.choices[0].text.strip()
     
-    print("0")
+    # print("0")
     
-    # Step 2: Use the summary for analysis
-    analysis_prompt = f"""You are a DeFi portfolio AI assistant. Based on the following wallet summary and external data, answer the user's question with actionable insights.
-    Wallet Summary:
-    {summary}
-    External Data:
-    {summarize(external_data)}
-    Question:
-    {wallet_query.question}
-    Include:
-    - Investment strategy tips
-    - Token recommendations
-    - Risk flags
-    - Notable gas fees
-    """
+    # # Step 2: Use the summary for analysis
+    # analysis_prompt = f"""You are a DeFi portfolio AI assistant. Based on the following wallet summary and external data, answer the user's question with actionable insights.
+    # Wallet Summary:
+    # {summary}
+    # External Data:
+    # {summarize(external_data)}
+    # Question:
+    # {wallet_query.question}
+    # Include:
+    # - Investment strategy tips
+    # - Token recommendations
+    # - Risk flags
+    # - Notable gas fees
+    # """
     
-    print("1")
+    # print("1")
     
-    # Call the OpenAI API for the analysis
-    analysis_response = await openai.Completion.acreate(
-        model="gpt-4o-mini",
-        prompt=analysis_prompt,
-        max_tokens=150,
-        temperature=0.7
-    )
-    analysis = analysis_response.choices[0].text.strip()
+    # # Call the OpenAI API for the analysis
+    # analysis_response = await openai.Completion.acreate(
+    #     model="gpt-4o-mini",
+    #     prompt=analysis_prompt,
+    #     max_tokens=150,
+    #     temperature=0.7
+    # )
+    # analysis = analysis_response.choices[0].text.strip()
     
-    print("2")
+    # print("2")
     
-    # Use OpenAI API directly for final streaming
-    response = openai.Completion.create(
-        model="gpt-4o-mini",
-        prompt=analysis,  # Use the analysis result as the prompt
-        max_tokens=500,
-        temperature=0.7,
-        stream=True
-    )
+    # # Use OpenAI API directly for final streaming
+    # response = openai.Completion.create(
+    #     model="gpt-4o-mini",
+    #     prompt=analysis,  # Use the analysis result as the prompt
+    #     max_tokens=500,
+    #     temperature=0.7,
+    #     stream=True
+    # )
     
-    print("3")
-    print("YOOOOOOOOO")
+    # print("3")
+    # print("YOOOOOOOOO")
     
-    return response
+    # return response

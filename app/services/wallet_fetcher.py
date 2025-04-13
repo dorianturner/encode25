@@ -51,17 +51,12 @@ class WalletQuery:
             balance = self.web3.eth.get_balance(self.wallet_address)
             # convert to float to allow json serialization
             eth_balance = float(self.web3.from_wei(balance, "ether"))
-            start = time.time()
-            print("Start fetch history")
-
-
 
             response = {
                 "ETH Balance": eth_balance,
                 "historical_data": self.fetch_web3_value_history()
             }
-            print("history:", time.time() - start)
-
+            
             payload = {
                 "jsonrpc": "2.0",
                 "method": "alchemy_getTokenBalances",
@@ -131,8 +126,6 @@ class WalletQuery:
                 ]
 
                 price_datas = await asyncio.gather(*tasks)
-
-            print("Elapsed time:", time.time() - start)
 
             token_balances = []
 
