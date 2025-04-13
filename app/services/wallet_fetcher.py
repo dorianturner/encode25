@@ -4,6 +4,16 @@ import json
 import os
 import asyncio
 import aiohttp
+from itertools import islice
+from time import time
+
+def batched(iterable, n):
+    """Batch data into tuples of length n. The last batch may be shorter."""
+    if n < 1:
+        raise ValueError("n must be at least one")
+    it = iter(iterable)
+    while batch := tuple(islice(it, n)):
+        yield batch
 
 
 # takes in wallet address, question? and list of tokens addresses
@@ -86,18 +96,58 @@ class WalletQuery:
                 "content-type": "application/json"
             }
 
-            price_data = requests.post(
-                f"https://api.g.alchemy.com/prices/v1/{os.getenv('ALCHEMY')}/tokens/by-address",
-                json = payload,
-                headers = headers
-            ).json()["data"]
+            async def get_price_by_addr(session, tokens_25):
+                payload = {"addresses": [
+                    {
+                        "network": "eth-mainnet",
+                        "address": token["contractAddress"]
+                    }
+
+                    for token in tokens_25
+                    ]
+                }
+
+                async with session.post(
+                    f"https://api.g.alchemy.com/prices/v1/{os.getenv('ALCHEMY')}/tokens/by-address",
+                    json = payload,
+                    headers = headers
+                ) as response:
+                    price_data = await response.json()
+                    return price_data["data"]
+                
+            start = time()
+            print("Started")
+
+            async with aiohttp.ClientSession() as session:
+                tasks = [
+                    get_price_by_addr(session, batch)
+                    for batch in batched(tokens, 25)
+                ]
+
+                price_datas = await asyncio.gather(*tasks)
+
+            print("\033[31mElaspsed time:", time() - start, "\033[0m")
+
+            token_balances = []
+
+            # price_data = requests.post(
+            #     f"https://api.g.alchemy.com/prices/v1/{os.getenv('ALCHEMY')}/tokens/by-address",
+            #     json = payload,
+            #     headers = headers
+            # ).json()["data"]
 
             token_prices = dict()
             token_balances = []
 
-            for token in price_data:
-                token_prices[token["address"]] = "NaN" if "error" in token else token["prices"][0]["value"]
-                token_prices[token["address"]] = 0 if float(token_prices[token["address"]]) > 65000 else token_prices[token["address"]] # hacky
+            for price_data in price_datas:
+                for token in price_data:
+                    token_prices[token["address"]] = "NaN" if "error" in token else token["prices"][0]["value"]
+                    token_prices[token["address"]] = 0 if float(token_prices[token["address"]]) > 65000 else token_prices[token["address"]] # hacky
+
+
+            # for token in price_data:
+            #     token_prices[token["address"]] = "NaN" if "error" in token else token["prices"][0]["value"]
+            #     token_prices[token["address"]] = 0 if float(token_prices[token["address"]]) > 65000 else token_prices[token["address"]] # hacky
 
             for token, metadata in zip(tokens, metadata_results):
                 token_address = token["contractAddress"]
@@ -123,8 +173,8 @@ class WalletQuery:
                     )
                 )
 
-            # response["ETH"] = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd").json()["ethereum"]["usd"]
-            response["ETH"] = 1600
+            response["ETH"] = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd").json()["ethereum"]["usd"]
+
             if token_balances:
                 response["ERC-20 Token Balances"] = sorted(
                     token_balances, key=lambda x: float(x[-1]), reverse=True

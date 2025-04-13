@@ -128,6 +128,91 @@ document.addEventListener('DOMContentLoaded', function() {
         let totalValue = 0;
         let ethValue = walletData['ETH Balance'] || 0;
 
+        // For a real app, you would fetch current price data
+        // This is a simplified calculation
+
+        // Calculate total value
+        // totalValue += ethValue * mockPrices['ETH'];
+
+        // Create HTML for portfolio items
+        let portfolioHTML = '';
+
+        let ethPrice = walletData['ETH'] || 0;
+        totalValue += ethValue * ethPrice;
+
+        // Add ETH
+        portfolioHTML += `
+            <div class="portfolio-item">
+                <div class="asset-info">
+                    <div class="asset-icon">
+                        <img src="static/images/ethereum-eth-logo-diamond-purple.svg" alt="ETH">
+                    </div>
+                    <div>
+                        <div class="asset-name">Ethereum</div>
+                        <div class="asset-symbol">ETH</div>
+                    </div>
+                </div>
+
+            <div>
+                <div class="asset-amount">${ethValue.toFixed(4)} ETH</div>
+                <div class="asset-price">\$${(ethValue * ethPrice).toFixed(2)}</div>
+            </div>
+                </div>
+        `;
+
+        // Add ERC-20 tokens if available
+        if (walletData['ERC-20 Token Balances']) {
+            const tokenBalances = walletData['ERC-20 Token Balances'];
+            // Create a mapping of addresses to token names
+
+            for (const [address, balance, tokenName, tokenSymbol, logoURL, price] of tokenBalances) {
+                console.log(address + " " + balance + " " + tokenName + " " + tokenSymbol + " " + logoURL + " " + price);
+                totalValue += parseFloat(price);
+
+                portfolioHTML += `
+                    <div class="portfolio-item">
+                        <div class="asset-info">
+                            <div class="asset-icon">
+                                <img src="${logoURL}" onerror="this.src='static/images/generic-token.png'" alt="${tokenSymbol}">
+                            </div>
+                            <div>
+                                <div class="asset-name">${tokenName}</div>
+                                <div class="asset-symbol">${tokenSymbol}</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="asset-amount">${parseFloat(balance).toFixed(2)} ${tokenSymbol}</div>
+                            <div class="asset-price">\$${parseFloat(price).toFixed(2)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Update the DOM
+        portfolioList.innerHTML = portfolioHTML;
+
+        // For smoother animation, update the text after a brief delay
+        setTimeout(() => {
+            // Use a counter animation for the total value
+            animateCounter(0, totalValue, 1500, value => {
+                portfolioValue.textContent = `Total: $${totalValue.toFixed(2)}`;
+            });
+        }, 100);
+
+        // Adjust portfolio height before showing
+        adjustPortfolioHeight();
+
+        // Remove hidden class first
+        portfolioSection.classList.remove('hidden');
+
+        // Force a reflow before adding the revealed class
+        void portfolioSection.offsetWidth;
+
+        // Then add revealed class to trigger animation
+        portfolioSection.classList.add('revealed');
+
+
         if (myChart) {
             myChart.destroy();
             myChart = null;
@@ -221,90 +306,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         ThemeManager.setChart(myChart);
-
-        // For a real app, you would fetch current price data
-        // This is a simplified calculation
-
-        // Calculate total value
-        // totalValue += ethValue * mockPrices['ETH'];
-
-        // Create HTML for portfolio items
-        let portfolioHTML = '';
-
-        let ethPrice = walletData['ETH'] || 0;
-        totalValue += ethValue * ethPrice;
-
-        // Add ETH
-        portfolioHTML += `
-            <div class="portfolio-item">
-                <div class="asset-info">
-                    <div class="asset-icon">
-                        <img src="static/images/ethereum-eth-logo-diamond-purple.svg" alt="ETH">
-                    </div>
-                    <div>
-                        <div class="asset-name">Ethereum</div>
-                        <div class="asset-symbol">ETH</div>
-                    </div>
-                </div>
-
-            <div>
-                <div class="asset-amount">${ethValue.toFixed(4)} ETH</div>
-                <div class="asset-price">\$${(ethValue * ethPrice).toFixed(2)}</div>
-            </div>
-                </div>
-        `;
-
-        // Add ERC-20 tokens if available
-        if (walletData['ERC-20 Token Balances']) {
-            const tokenBalances = walletData['ERC-20 Token Balances'];
-            // Create a mapping of addresses to token names
-
-            for (const [address, balance, tokenName, tokenSymbol, logoURL, price] of tokenBalances) {
-                console.log(address + " " + balance + " " + tokenName + " " + tokenSymbol + " " + logoURL + " " + price);
-                totalValue += parseFloat(price);
-
-                portfolioHTML += `
-                    <div class="portfolio-item">
-                        <div class="asset-info">
-                            <div class="asset-icon">
-                                <img src="${logoURL}" onerror="this.src='static/images/generic-token.png'" alt="${tokenSymbol}">
-                            </div>
-                            <div>
-                                <div class="asset-name">${tokenName}</div>
-                                <div class="asset-symbol">${tokenSymbol}</div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="asset-amount">${parseFloat(balance).toFixed(2)} ${tokenSymbol}</div>
-                            <div class="asset-price">\$${parseFloat(price).toFixed(2)}</div>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        // Update the DOM
-        portfolioList.innerHTML = portfolioHTML;
-
-        // For smoother animation, update the text after a brief delay
-        setTimeout(() => {
-            // Use a counter animation for the total value
-            animateCounter(0, totalValue, 1500, value => {
-                portfolioValue.textContent = `Total: $${totalValue.toFixed(2)}`;
-            });
-        }, 100);
-
-        // Adjust portfolio height before showing
-        adjustPortfolioHeight();
-
-        // Remove hidden class first
-        portfolioSection.classList.remove('hidden');
-
-        // Force a reflow before adding the revealed class
-        void portfolioSection.offsetWidth;
-
-        // Then add revealed class to trigger animation
-        portfolioSection.classList.add('revealed');
     }
 
     // Counter animation function
