@@ -1,4 +1,5 @@
 let myChart = null;
+let pieChart = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     // Adjust portfolio height dynamically based on content
@@ -25,7 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const htmlElement = document.documentElement;
         const themeToggle = document.getElementById('theme-toggle');
         const themeToggleIcon = document.getElementById('theme-toggle-icon');
-        let myChart = null;
 
         const setTheme = (theme) => {
             htmlElement.classList.remove('light', 'dark');
@@ -35,19 +35,29 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         const updateChartTheme = () => {
-            if (!myChart) return;
-            
             const style = getComputedStyle(document.documentElement);
-            myChart.options.scales.x.ticks.color = style.getPropertyValue('--text-muted');
-            myChart.options.scales.y.ticks.color = style.getPropertyValue('--text-muted');
-            myChart.options.scales.y.grid.color = style.getPropertyValue('--portfolio-border');
-            myChart.options.plugins.tooltip.backgroundColor = style.getPropertyValue('--card-bg');
-            myChart.options.plugins.tooltip.titleColor = style.getPropertyValue('--text-color');
-            myChart.options.plugins.tooltip.bodyColor = style.getPropertyValue('--text-color');
-            myChart.options.plugins.tooltip.borderColor = style.getPropertyValue('--input-border');
             
-            myChart.data.datasets[0].borderColor = style.getPropertyValue('--primary');
-            myChart.update();
+            if (myChart) {
+                myChart.options.scales.x.ticks.color = style.getPropertyValue('--text-muted');
+                myChart.options.scales.y.ticks.color = style.getPropertyValue('--text-muted');
+                myChart.options.scales.y.grid.color = style.getPropertyValue('--portfolio-border');
+                myChart.options.plugins.tooltip.backgroundColor = style.getPropertyValue('--card-bg');
+                myChart.options.plugins.tooltip.titleColor = style.getPropertyValue('--text-color');
+                myChart.options.plugins.tooltip.bodyColor = style.getPropertyValue('--text-color');
+                myChart.options.plugins.tooltip.borderColor = style.getPropertyValue('--input-border');
+                myChart.data.datasets[0].borderColor = style.getPropertyValue('--primary');
+                myChart.update();
+            }
+            
+            if (pieChart) {
+                pieChart.options.plugins.legend.labels.color = style.getPropertyValue('--text-color');
+                pieChart.options.plugins.tooltip.backgroundColor = style.getPropertyValue('--card-bg');
+                pieChart.options.plugins.tooltip.titleColor = style.getPropertyValue('--text-color');
+                pieChart.options.plugins.tooltip.bodyColor = style.getPropertyValue('--text-color');
+                pieChart.options.plugins.tooltip.borderColor = style.getPropertyValue('--input-border');
+                pieChart.options.plugins.title.color = style.getPropertyValue('--text-color');
+                pieChart.update();
+            }
         };
 
         const toggleTheme = () => {
@@ -64,12 +74,31 @@ document.addEventListener('DOMContentLoaded', function() {
             themeToggle.addEventListener('click', toggleTheme);
         };
 
-        // return { init };
-
-        return { init, updateChartTheme, setChart: (chart) => { myChart = chart; } };
+        return { init, updateChartTheme, setChart: (chart) => { myChart = chart; }, setPieChart: (chart) => { pieChart = chart; } };
     })();
 
     ThemeManager.init();
+
+    // Handle tab switching
+    function setupGraphTabs() {
+        const tabs = document.querySelectorAll('.graph-tab');
+        const chartContainers = document.querySelectorAll('.chart-placeholder');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and containers
+                tabs.forEach(t => t.classList.remove('active'));
+                chartContainers.forEach(c => c.classList.remove('active'));
+
+                // Add active class to clicked tab
+                tab.classList.add('active');
+
+                // Show corresponding chart
+                const tabName = tab.dataset.tab;
+                document.querySelector(`.${tabName}-chart`).classList.add('active');
+            });
+        });
+    }
 
     // Handle Ethereum address form submission
     const ethereumForm = document.getElementById('ethereum-form');
@@ -77,7 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const portfolioValue = document.querySelector('.portfolio-value');
     const portfolioSection = document.querySelector('.portfolio');
 
-    // Ethereum form handling
     if (ethereumForm) {
         ethereumForm.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -118,7 +146,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-   // Updated portfolio reveal functionality
     function updatePortfolio(walletData) {
         if (!walletData || walletData.error) {
             showError('No wallet data available.');
@@ -127,12 +154,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         let totalValue = 0;
         let ethValue = walletData['ETH Balance'] || 0;
-
-        // For a real app, you would fetch current price data
-        // This is a simplified calculation
-
-        // Calculate total value
-        // totalValue += ethValue * mockPrices['ETH'];
 
         // Create HTML for portfolio items
         let portfolioHTML = '';
@@ -152,21 +173,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="asset-symbol">ETH</div>
                     </div>
                 </div>
-
-            <div>
-                <div class="asset-amount">${ethValue.toFixed(4)} ETH</div>
-                <div class="asset-price">\$${(ethValue * ethPrice).toFixed(2)}</div>
-            </div>
+                <div>
+                    <div class="asset-amount">${ethValue.toFixed(4)} ETH</div>
+                    <div class="asset-price">\$${(ethValue * ethPrice).toFixed(2)}</div>
                 </div>
+            </div>
         `;
 
         // Add ERC-20 tokens if available
         if (walletData['ERC-20 Token Balances']) {
             const tokenBalances = walletData['ERC-20 Token Balances'];
-            // Create a mapping of addresses to token names
 
             for (const [address, balance, tokenName, tokenSymbol, logoURL, price] of tokenBalances) {
-                console.log(address + " " + balance + " " + tokenName + " " + tokenSymbol + " " + logoURL + " " + price);
                 totalValue += parseFloat(price);
 
                 portfolioHTML += `
@@ -194,7 +212,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // For smoother animation, update the text after a brief delay
         setTimeout(() => {
-            // Use a counter animation for the total value
             animateCounter(0, totalValue, 1500, value => {
                 portfolioValue.textContent = `Total: $${totalValue.toFixed(2)}`;
             });
@@ -212,25 +229,84 @@ document.addEventListener('DOMContentLoaded', function() {
         // Then add revealed class to trigger animation
         portfolioSection.classList.add('revealed');
 
-
+        // Destroy existing charts if they exist
         if (myChart) {
             myChart.destroy();
             myChart = null;
         }
+        if (pieChart) {
+            pieChart.destroy();
+            pieChart = null;
+        }
 
-        const historicalData = walletData['historical_data'];
+        // Prepare data for both charts
+        const historicalData = walletData['historical_data'] || [];
         const filteredHistoricalData = historicalData.filter(item => item.value >= 1);
-
         const dates = filteredHistoricalData.map(item => item.date);
         const values = filteredHistoricalData.map(item => item.value);
 
+        // Prepare pie chart data
+        const tokens = [];
+        const amounts = [];
+        let pieTotalValue = 0;
+
+        // Add ETH data if available
+        if (walletData['ETH Balance'] && walletData['ETH']) {
+            const ethValue = walletData['ETH Balance'] * walletData['ETH'];
+            tokens.push('ETH');
+            amounts.push(ethValue);
+            pieTotalValue += ethValue;
+        }
+
+        // Add ERC-20 tokens if available
+        if (walletData['ERC-20 Token Balances']) {
+            for (const token of walletData['ERC-20 Token Balances']) {
+                // Skip tokens with zero or negative value
+                if (token[5] <= 0) continue;
+                
+                tokens.push(token[3]); // Symbol
+                amounts.push(token[5]); // USD value
+                pieTotalValue += token[5];
+            }
+        }
+
+        // Group small tokens into "Others" if there are more than 8 tokens
+        const MAX_TOKENS_TO_DISPLAY = 8;
+        if (tokens.length > MAX_TOKENS_TO_DISPLAY) {
+            const threshold = pieTotalValue * 0.01; // 1% threshold
+            const mainTokens = [];
+            const mainAmounts = [];
+            let othersSum = 0;
+
+            for (let i = 0; i < tokens.length; i++) {
+                if (amounts[i] >= threshold) {
+                    mainTokens.push(tokens[i]);
+                    mainAmounts.push(amounts[i]);
+                } else {
+                    othersSum += amounts[i];
+                }
+            }
+
+            // Add "Others" if there are small tokens
+            if (othersSum > 0) {
+                mainTokens.push('Others');
+                mainAmounts.push(othersSum);
+            }
+
+            // Use the filtered data
+            tokens.length = 0;
+            amounts.length = 0;
+            tokens.push(...mainTokens);
+            amounts.push(...mainAmounts);
+        }
+
+        // Create line chart
         const ctx = document.getElementById('myChart').getContext('2d');
 
         var gradientStroke = ctx.createLinearGradient(0, 230, 0, 50);
-
         gradientStroke.addColorStop(1, 'rgba(72,72,176,0.2)');
         gradientStroke.addColorStop(0.01, 'rgba(72,72,176,0.0)');
-        gradientStroke.addColorStop(0, 'rgba(119,52,169,0)'); //purple colors
+        gradientStroke.addColorStop(0, 'rgba(119,52,169,0)');
 
         myChart = new Chart(ctx, {
             type: 'line',
@@ -278,6 +354,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             drawBorder: false
                         },
                         ticks: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-muted'),
                             callback: function(value, index) {
                                 const date = new Date(this.getLabelForValue(value));
                                 return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -305,7 +382,80 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
+        // Create pie chart
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: tokens,
+                datasets: [{
+                    data: amounts,
+                    backgroundColor: [
+                        'rgba(99, 102, 241, 0.7)',   // Indigo
+                        'rgba(239, 68, 68, 0.7)',    // Red
+                        'rgba(16, 185, 129, 0.7)',   // Green
+                        'rgba(245, 158, 11, 0.7)',   // Yellow
+                        'rgba(139, 92, 246, 0.7)',   // Purple
+                        'rgba(20, 184, 166, 0.7)',   // Teal
+                        'rgba(249, 115, 22, 0.7)',   // Orange
+                        'rgba(236, 72, 153, 0.7)',   // Pink
+                        'rgba(6, 182, 212, 0.7)',    // Cyan
+                        'rgba(156, 163, 175, 0.7)'   // Gray
+                    ],
+                    borderColor: getComputedStyle(document.documentElement).getPropertyValue('--card-bg'),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text-color'),
+                            font: {
+                                size: 12
+                            },
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--card-bg'),
+                        titleColor: getComputedStyle(document.documentElement).getPropertyValue('--text-color'),
+                        bodyColor: getComputedStyle(document.documentElement).getPropertyValue('--text-color'),
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--input-border'),
+                        bodyFont: {
+                            size: 14
+                        },
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = parseFloat(context.raw || 0).toFixed(2);
+                                return `${label}: $${value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Token Distribution',
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--text-color'),
+                        font: {
+                            size: 16
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+
+        // Set charts in ThemeManager
         ThemeManager.setChart(myChart);
+        ThemeManager.setPieChart(pieChart);
+        
+        // Initialize the tabs
+        setupGraphTabs();
+        ThemeManager.updateChartTheme();
     }
 
     // Counter animation function
@@ -315,7 +465,6 @@ document.addEventListener('DOMContentLoaded', function() {
         function update(currentTime) {
             const elapsedTime = currentTime - startTime;
             const progress = Math.min(elapsedTime / duration, 1);
-            // Use easeOutExpo for smoother animation
             const easing = 1 - Math.pow(2, -10 * progress);
             const currentValue = start + (end - start) * easing;
 
@@ -353,7 +502,6 @@ document.addEventListener('DOMContentLoaded', function() {
         answerBox.innerHTML = '<div class="spinner loading"></div>';
     
         try {
-            // Send to backend
             const response = await fetch('/api/ask_question_stream', {
                 method: 'POST',
                 headers: {
@@ -370,7 +518,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`Request failed (${response.status}): ${errorText}`);
             }
     
-            // Ensure marked.js is loaded
             const ensureMarkedLoaded = () => {
                 return new Promise((resolve) => {
                     if (typeof marked !== 'undefined') {
@@ -384,10 +531,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             };
     
-            // Wait for marked.js to load
             await ensureMarkedLoaded();
     
-            // Create a container for the streamed content
             answerBox.innerHTML = '<div class="answer-text markdown-content"></div>';
             const answerText = answerBox.querySelector('.answer-text');
     
@@ -395,26 +540,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const decoder = new TextDecoder();
             let accumulatedText = '';
             
-            // Read and stream the response
             while (true) {
                 const { value, done } = await reader.read();
                 if (done) break;
                 
-                // Decode and add to accumulated text
                 const chunk = decoder.decode(value, { stream: true });
                 accumulatedText += chunk;
                 
-                // Render accumulated text as markdown
                 answerText.innerHTML = marked.parse(accumulatedText);
                 
-                // Optional: highlight code blocks if you're using highlight.js
                 if (typeof hljs !== 'undefined') {
                     answerText.querySelectorAll('pre code').forEach((block) => {
                         hljs.highlightElement(block);
                     });
                 }
                 
-                // Scroll to the bottom as new content arrives
                 answerText.scrollTop = answerText.scrollHeight;
             }
     

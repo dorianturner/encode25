@@ -54,16 +54,19 @@
             <div class="middle-column">
                 <!-- Graph placeholder (Top middle) -->
                 <div class="card graph-section">
-                    <h2>Portfolio Analytics</h2>
-                    <div class="graph-placeholder">
-                        <div class="graph-header">
-                            <div class="graph-title">Performance Overview</div>
-                            <div class="graph-timeframe"> </div>
+                    <div class="graph-header">
+                        <h2>Portfolio Analytics</h2>
+                        <div class="graph-tabs">
+                            <button class="graph-tab active" data-tab="performance">Performance</button>
+                            <button class="graph-tab" data-tab="distribution">Distribution</button>
                         </div>
-                        <div class="graph-content">
-                            <div class="chart-placeholder">
-                                <canvas id="myChart"></canvas>
-                            </div>
+                    </div>
+                    <div class="graph-content">
+                        <div class="chart-placeholder performance-chart active">
+                            <canvas id="myChart"></canvas>
+                        </div>
+                        <div class="chart-placeholder distribution-chart">
+                            <canvas id="pieChart"></canvas>
                         </div>
                     </div>
                 </div>
