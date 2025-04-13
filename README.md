@@ -1,36 +1,10 @@
 <p align="center">
-  <img src="app/static/images/defiant_logo.png" alt="DeFiant Logo" width="120" />
+  <img src="app/static/images/defiant.png" alt="DeFiant Logo" width="600" />
 </p>
 
-# DeFiant
-- **DeFiant** is an AI-powered autonomous agent that transforms how users interact with DeFi.
-  - Provides personalized, real-time portfolio analysis through a seamless experience.
-  - Users simply input their Ethereum wallet address—no extensions, no fuss.
-  - Instantly receive a comprehensive overview of holdings, transaction history, and token distribution.
+# Defiant: A Beginner-Focused Crypto Portfolio Assistant
 
-- **Powered by GPT-4o** and enhanced with LangChain agents:
-  - Integrates on-chain data from **Etherscan** and **Alchemy** with off-chain insights like token trends and market conditions.
-  - DeFiant intelligently interprets data to generate natural language responses.
-  - Offers clear, contextual guidance tailored to the user’s asset mix and activity.
-
-- **In a rapidly changing DeFi landscape**, making sense of wallets, risks, and investment opportunities can be overwhelming.
-  - **DeFiant** steps in as a real-time **AI portfolio advisor**.
-  - Always helps contextualize wallet data, visualize diversification and performance, and offer actionable advice.
-
-- **With clear summaries and dynamic charts**, users can:
-  - Easily see the spread of their assets, risk exposure, and transaction costs, all explained in plain, easy language.
-  - Identify stablecoins, surface hidden gas fees, and recommend better strategies.
-
-- **Empowers users** to make smarter, faster decisions:
-  - Users can ask open-ended questions like “What should I do?” or “Where am I exposed?”
-  - Receive intelligent, data-driven insights instantly.
-
-- **Designed for simplicity, transparency, and power**:
-  - Bridges the gap between complex DeFi data and human decision-making.
-  - Makes understanding Web3 assets as easy as typing a question.
-  - Unlocks the true potential of AI-driven finance, so you can be **DeFiant every step of the way**.
-
-
+Defiant is a crypto portfolio assistant designed to help beginners safely explore and understand the cryptocurrency space. By prioritizing education, user safety, and simplicity, Defiant provides a supportive environment for new users to track portfolios, understand risks, and stay updated — without the complexity or impulsive behavior enabled by typical trading platforms.
 
 ---
 
@@ -44,24 +18,101 @@
 
 ---
 
-## 🎯 Who is Defiant for?
+## 🧠 Core Features
 
-**New to crypto?** Defiant is built for you. Our goal is to:
+1. **📊 Portfolio Tracking**  
+   - Clean dashboard of token holdings by value  
+   - Dollar-value breakdowns and historical charts  
+   - Token composition pie chart  
 
-- Help you avoid beginner mistakes that put your funds at risk.
-- Base guidance on accepted financial principles—not hype.
-- Make crypto easier to understand, not more intimidating.
-- Encourage smart, confident decision-making.
+2. **🤖 AI-Powered Portfolio Q&A**  
+   - Natural language feedback on portfolio risk  
+   - Personalized suggestions based on real-time market data  
+   - Market insights focused on fundamentals, not speculation  
 
-We want everyone to explore crypto safely and intelligently—not fear it.
+3. **📰 Live Crypto News Feed**  
+   - Updates from CoinDesk to help users stay informed
+   - Stay ontop of recent developments that could affect your portfolio  
+
+4. **🔒 Transaction Restrictions**  
+   - No buy/sell features  
+   - Inspired by *Atomic Habits* to reduce impulsive decisionmaking
+
+5. **🎨 User-Friendly Interface**  
+   - Dark/light mode  
+   - Hover tooltips and animation for clarity  
+   - Minimalist layout for focus and ease of use  
 
 ---
 
-## ⚙️ Tech Stack
+## 🏗️ System Architecture
 
-- **Frontend**: Vanilla CSS, HTML, Vanilla JavaScript
-- **Backend**: Flask, FastAPI
-- **AI Integration**: OpenAI API
-- **Blockchain & Data Sources**: Web3, Etherscan API, CoinGecko API, CoinDesk API
-- **Hosting**: Vercel
+**Tech Stack**
 
+- **Frontend:** HTML, CSS, JavaScript (Vanilla)
+- **Backend:** Flask (session management), FastAPI (async API & AI streaming)
+- **AI Integration:** OpenAI API (LLMs for analysis and Q&A)
+- **Blockchain/Data:** Web3, Etherscan API, CoinGecko API
+- **Hosting:** Vercel (scalable, CI/CD-ready, edge delivery)
+
+**Design Choices**
+
+- No frontend frameworks to reduce size and increase compatibility  
+- FastAPI + Flask for optimized speed and session handling  
+- OpenAI enables simplified explanations and pattern detection  
+- Web3 + APIs = transparent, real-time blockchain interaction  
+
+---
+
+## 👥 Target Audience
+
+Defiant is built for:
+- Users new to crypto and blockchain  
+- Individuals seeking safe, educational tools  
+- People overwhelmed by traditional exchanges  
+- Those looking to gradually build understanding  
+
+---
+
+## 📸 Demo
+
+> ![Homepage Screenshot](images/home_placeholder.png)  
+> _Figure 1: Clean homepage with portfolio overview_
+> 
+> ![AI Q&A Screenshot](images/ai_placeholder.png)  
+> _Figure 2: AI-generated risk insights on user's portfolio_
+> 
+> ![News Feed Screenshot](images/news_placeholder.png)  
+> _Figure 3: Real-time news feed from CoinDesk_
+
+---
+
+## 🔐 Philosophy
+
+Defiant is not just another crypto dashboard — it’s a **training ground** for users to learn responsibly. By focusing on **education over execution**, we help users build the confidence and knowledge needed for more advanced platforms later on.
+
+---
+
+## 📦 Deployment
+
+Defiant is hosted on **Vercel** for:
+- Low-latency edge delivery  
+- Auto-scaling with usage  
+- Simple CI/CD pipelines for rapid iteration  
+
+---
+
+## 📚 Resources
+
+- [OpenAI API](https://platform.openai.com/docs)
+- [CoinGecko API](https://www.coingecko.com/en/api)
+- [Etherscan API](https://docs.etherscan.io/)
+- [Web3.js Documentation](https://web3js.readthedocs.io/)
+
+---
+
+## 🧩 Future Plans
+
+- Interactive onboarding/tutorial flow  
+- Community Q&A with vetted experts  
+- Forum for beginners to chat with and learn from other users
