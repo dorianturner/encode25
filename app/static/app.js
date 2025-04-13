@@ -1,3 +1,5 @@
+let myChart = null;
+
 document.addEventListener('DOMContentLoaded', function() {
     // Adjust portfolio height dynamically based on content
     function adjustPortfolioHeight() {
@@ -126,6 +128,10 @@ document.addEventListener('DOMContentLoaded', function() {
         let totalValue = 0;
         let ethValue = walletData['ETH Balance'] || 0;
 
+        if (myChart) {
+            myChart.destroy();
+            myChart = null;
+        }
 
         const historicalData = walletData['historical_data'];
         const filteredHistoricalData = historicalData.filter(item => item.value >= 1);
@@ -141,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gradientStroke.addColorStop(0.01, 'rgba(72,72,176,0.0)');
         gradientStroke.addColorStop(0, 'rgba(119,52,169,0)'); //purple colors
 
-        const myChart = new Chart(ctx, {
+        myChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: dates,
