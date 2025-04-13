@@ -5,6 +5,7 @@ import os
 import asyncio
 import aiohttp
 from itertools import islice
+import time
 
 def batched(iterable, n):
     """Batch data into tuples of length n. The last batch may be shorter."""
@@ -50,10 +51,16 @@ class WalletQuery:
             balance = self.web3.eth.get_balance(self.wallet_address)
             # convert to float to allow json serialization
             eth_balance = float(self.web3.from_wei(balance, "ether"))
+            start = time.time()
+            print("Start fetch history")
+
+
+
             response = {
                 "ETH Balance": eth_balance,
                 "historical_data": self.fetch_web3_value_history()
             }
+            print("history:", time.time() - start)
 
             payload = {
                 "jsonrpc": "2.0",
@@ -113,7 +120,10 @@ class WalletQuery:
                 ) as response:
                     price_data = await response.json()
                     return price_data["data"]
-                
+            
+            start = time.time()
+            print("Started")
+
             async with aiohttp.ClientSession() as session:
                 tasks = [
                     get_price_by_addr(session, batch)
@@ -121,6 +131,8 @@ class WalletQuery:
                 ]
 
                 price_datas = await asyncio.gather(*tasks)
+
+            print("Elapsed time:", time.time() - start)
 
             token_balances = []
 
@@ -157,8 +169,8 @@ class WalletQuery:
                     )
                 )
 
-            response["ETH"] = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd").json()["ethereum"]["usd"]
-
+            # response["ETH"] = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd").json()["ethereum"]["usd"]
+            response["ETH"] = 1600
             if token_balances:
                 response["ERC-20 Token Balances"] = sorted(
                     token_balances, key=lambda x: float(x[-1]), reverse=True
@@ -224,15 +236,22 @@ class WalletQuery:
         url = f"{self.covalent_api}/{self.wallet_address}/portfolio_v2/"
 
         headers = {"Authorization": f"Bearer {API_KEY}"}
-
+        start = time.time()
+        print("Before request")
         response = requests.get(url, headers=headers).json()
+        print("After request:", time.time() - start)
         data = []
+
+        start = time.time()
+        print("Before loop")
 
         for item in response["data"]["items"]:
             for holding in item["holdings"]:
                 date = holding["timestamp"][:10]  # Just get YYYY-MM-DD
                 value = holding["close"]["quote"]
                 data.append({"date": date, "value": value})
+
+        print("End of loop:", time.time() - start)
 
         return sorted(data, key=lambda x: x["date"])
 

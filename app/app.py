@@ -11,6 +11,7 @@ from a2wsgi import ASGIMiddleware
 
 
 flask_app = Flask(__name__)
+flask_app.debug = True
 fastapi_app = FastAPI()
 
 
