@@ -124,32 +124,32 @@ async def get_stream(wallet_query: wallet_fetcher.WalletQuery):
 
 
     prompt = f"""
-        You are an AI assistant helping a beginner crypto user understand and improve their wallet performance.
-        Based on the information below, provide a simple, beginner-friendly explanation with actionable insights.
+        You are an AI assistant helping a beginner crypto user make informed, responsible decisions about their wallet activity.
 
-        Wallet Summary:
+        Inputs:
+        - Wallet Summary:
         {summarize(wallet_summary)}
 
-        Recent Transactions (last 5):
+        - Recent Transactions (last 5):
         {', '.join([f'{t["hash"]} (Block #{t["blockNumber"]})' for t in wallet_transaction_history])}
 
-        External Market & Risk Data:
+        - External Market & Risk Data:
         {summarize(external_data)}
 
-        User Question:
+        - User Question:
         {wallet_query.question}
 
-        Your Tasks (ranked by importance):
-        1. Analyze past transactions for gas fees, patterns, and any signs of risk or inefficiency.
-        2. Provide a clear, beginner-safe analysis of the wallet’s overall health and performance.
-        3. Suggest safer token diversification options aligned with market trends and portfolio history (avoid hype-driven suggestions).
-        4. Recommend improvements that focus on learning, reducing risk, and avoiding common beginner mistakes.
+        Your task:
+        - Answer the user's question with sensible, beginner-friendly advice.
+        - Use the provided data only to inform your response — do NOT directly quote or refer to specific hashes, block numbers, or summaries.
+        - Give specific guidance that helps the user make better long-term decisions.
+        - You should make reference to the users token balances and token prices if relevant to the advice given.
+        - Keep your explanation clear, simple, and focused on reducing risk and improving understanding.
 
-        Important Notes:
-        - Do not mention ETH balance or token market values directly.
-        - Focus on clarity, simplicity, and educational value.
-        - Prioritize suggestions that help prevent impulsive decisions and promote long-term understanding.
+        Do not speculate or add information beyond what’s relevant to the question.
     """
+
+
 
     
     # Retry logic with exponential backoff

@@ -34,11 +34,6 @@ async def submit_address():
     wallet_data = await wallet.fetch_web3_data()
     
     # Parse the JSON string back to a dictionary
-    if wallet_data:
-        wallet_data = json.loads(wallet_data)
-    else:
-        wallet_data = {"error": "No data found"}
-        
     # Fetch transaction history (limit to recent transactions)
     response_data = {
         "wallet": wallet_data,
