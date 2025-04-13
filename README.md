@@ -69,7 +69,7 @@ Defiant is a crypto portfolio assistant designed to help beginners safely explor
 Defiant is built for:
 - Users new to crypto and blockchain  
 - Individuals seeking safe, educational tools  
-- People overwhelmed by traditional exchanges  
+- People overwhelmed by the complexity of crypto exchanges  
 - Those looking to gradually build understanding  
 
 ---
