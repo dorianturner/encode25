@@ -139,8 +139,9 @@ h1 {
 
 .graph-section {
     flex: 0 0 auto;
-    height: 45%; /* Takes approximately half the middle column */
-    /* overflow: hidden; */
+    height: 100%; /* Takes approximately half the middle column */
+    
+    overflow: hidden;
 }
 
 .news-section {
@@ -459,7 +460,11 @@ input[type="text"]:focus {
 
 /* Chart containers */
 .chart-placeholder {
+    height: 100%;
     width: 100%;
+    display:flex;
+    justify-content: center;    
+    align-items: centers;
     height: calc(100% - 40px);
     position: relative;
     display: none;

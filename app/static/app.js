@@ -2,6 +2,25 @@ let myChart = null;
 let pieChart = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    // Function to adjust chart container dimensions dynamically
+    function adjustChartContainer() {
+        const graphSection = document.querySelector('.graph-section');
+        const performanceChart = document.querySelector('.performance-chart');
+        const distributionChart = document.querySelector('.distribution-chart');
+
+        if (graphSection) {
+            const graphHeight = graphSection.clientHeight;
+            if (performanceChart) performanceChart.style.height = `${graphHeight*0.7}px`;
+            if (distributionChart) distributionChart.style.height = `${graphHeight*0.7}px`;
+        }
+    }
+
+    // Call adjustChartContainer on DOMContentLoaded
+    adjustChartContainer();
+
+
+
     // Adjust portfolio height dynamically based on content
     function adjustPortfolioHeight() {
         const getElementHeight = (selector) =>
@@ -436,14 +455,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             }
                         }
                     },
-                    title: {
-                        display: true,
-                        text: 'Token Distribution',
-                        color: getComputedStyle(document.documentElement).getPropertyValue('--text-color'),
-                        font: {
-                            size: 16
-                        }
-                    }
+                    // title: {
+                    //     align: 'center',
+                    //     display: true,
+                    //     text: 'Token Distribution',
+                    //     color: getComputedStyle(document.documentElement).getPropertyValue('--text-color'),
+                    //     font: {
+                    //         size: 16
+                    //     }
+                    // }
                 },
                 cutout: '60%'
             }
@@ -563,6 +583,10 @@ document.addEventListener('DOMContentLoaded', function() {
             answerBox.innerHTML = '<div class="error">Failed to get response. Please try again.</div>';
         }
     });
+
+
+    window.addEventListener('resize', adjustChartContainer);
+    document.addEventListener('DOMContentLoaded', adjustChartContainer);
 
     // Add event listener for window resize to adjust heights
     window.addEventListener('resize', adjustPortfolioHeight);
