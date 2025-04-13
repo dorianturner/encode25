@@ -10,7 +10,7 @@ Defiant is a crypto portfolio assistant designed to help beginners safely explor
 
 ## 🚀 Quickstart
 
-1. **Open the app**: [Click here to access the app](#)
+1. **Open the app**: [Click here to access the app](defiantai.me)
 2. **Enter your wallet address**: Type it in and press **Enter**.
 3. **View your portfolio**: Get a clear breakdown of your assets and their performance.
 4. **Ask questions**: Use the AI assistant to learn more about your holdings, crypto terms, or anything else.
@@ -76,29 +76,27 @@ Defiant is built for:
 
 ## 📸 Demo
 
-> ![Homepage Screenshot](images/home_placeholder.png)  
-> _Figure 1: Clean homepage with portfolio overview_
-> 
-> ![AI Q&A Screenshot](images/ai_placeholder.png)  
-> _Figure 2: AI-generated risk insights on user's portfolio_
-> 
-> ![News Feed Screenshot](images/news_placeholder.png)  
-> _Figure 3: Real-time news feed from CoinDesk_
+> ![Homepage Screenshot](./app/static/images/homepage.png)  
+> _Figure 1: Homepage with portfolio overview_
+>
+>
+> ![Light Homepage Screenshot](./app/static/images/homepage_light.png)  
+> _Figure 2: Light Mode Homepage with portfolio overview_
 
 ---
 
 ## 🔐 Philosophy
 
-Defiant is not just another crypto dashboard — it’s a **training ground** for users to learn responsibly. By focusing on **education over execution**, we help users build the confidence and knowledge needed for more advanced platforms later on.
+Defiant is a **training ground** for users to learn responsible trading in a safe environment. By focusing on **education over execution**, we help users build the confidence and knowledge needed for more advanced platforms later on.
 
 ---
 
 ## 📦 Deployment
 
-Defiant is hosted on **Vercel** for:
+Defiant is hosted on **Google Cloud** for:
 - Low-latency edge delivery  
 - Auto-scaling with usage  
-- Simple CI/CD pipelines for rapid iteration  
+- Simple deployment with Docker  
 
 ---
 
