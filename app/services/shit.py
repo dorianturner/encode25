@@ -41,9 +41,10 @@ class WalletQuery:
             balance = self.web3.eth.get_balance(self.wallet_address)
             # convert to float to allow json serialization
             eth_balance = float(self.web3.from_wei(balance, "ether"))
+
             response = {
                 "ETH Balance": eth_balance,
-                "historical_data": self.fetch_web3_value_history()
+                "historical_data": self.fetch_web3_value_history(),
             }
 
             payload = {
@@ -55,7 +56,9 @@ class WalletQuery:
 
             headers = {"Content-Type": "application/json"}
 
-            erc20_response = requests.post(self.alchemy_api, json=payload, headers=headers).json()
+            erc20_response = requests.post(
+                self.alchemy_api, json=payload, headers=headers
+            ).json()
 
             tokens = [
                 token
@@ -71,39 +74,14 @@ class WalletQuery:
 
                 metadata_results = await asyncio.gather(*tasks)
 
-            payload = {"addresses": [
-                {
-                    "network": "eth-mainnet",
-                    "address": token["contractAddress"]
-                }
-
-                for token in tokens
-                ]
-            }
-
-            headers = {
-                "accept": "application/json",
-                "content-type": "application/json"
-            }
-
-            price_data = requests.post(
-                f"https://api.g.alchemy.com/prices/v1/{os.getenv('ALCHEMY')}/tokens/by-address",
-                json = payload,
-                headers = headers
-            ).json()["data"]
-
-            token_prices = dict()
             token_balances = []
-
-            for token in price_data:
-                token_prices[token["address"]] = "NaN" if "error" in token else token["prices"][0]["value"]
-                token_prices[token["address"]] = 0 if float(token_prices[token["address"]]) > 65000 else token_prices[token["address"]] # hacky
 
             for token, metadata in zip(tokens, metadata_results):
                 token_address = token["contractAddress"]
                 hex_balance = token["tokenBalance"]
+                meta = metadata
 
-                decimals = metadata.get("decimals")
+                decimals = meta.get("decimals")
 
                 if decimals is None:
                     decimals = 18
@@ -111,23 +89,21 @@ class WalletQuery:
                     decimals = int(decimals)
 
                 balance_int = int(hex_balance, 16)
-                formatted_balance = balance_int / (10 ** decimals)
+
+                formatted_balance = balance_int / (10**decimals)
                 token_balances.append(
                     (
                         token_address,
                         formatted_balance,
-                        metadata["name"],
-                        metadata["symbol"],
-                        metadata["logo"],
-                        str(float(token_prices.get(token_address)) * formatted_balance)
+                        meta.get("name"),
+                        meta.get("symbol"),
+                        meta.get("logo"),
                     )
                 )
 
-            # response["ETH"] = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd").json()["ethereum"]["usd"]
-            response["ETH"] = 1600
             if token_balances:
                 response["ERC-20 Token Balances"] = sorted(
-                    token_balances, key=lambda x: float(x[-1]), reverse=True
+                    token_balances, key=lambda x: x[1], reverse=True
                 )
 
             return json.dumps(response, indent=2)
@@ -191,16 +167,21 @@ class WalletQuery:
 
         headers = {"Authorization": f"Bearer {API_KEY}"}
 
-        response = requests.get(url, headers=headers).json()
-        data = []
+        try:
+            response = requests.get(url, headers=headers).json()
+            data = []
 
-        for item in response["data"]["items"]:
-            for holding in item["holdings"]:
-                date = holding["timestamp"][:10]  # Just get YYYY-MM-DD
-                value = holding["close"]["quote"]
-                data.append({"date": date, "value": value})
+            for item in response["data"]["items"]:
+                for holding in item["holdings"]:
+                    date = holding["timestamp"][:10]  # Just get YYYY-MM-DD
+                    value = holding["close"]["quote"]
+                    data.append({"date": date, "value": value})
 
-        return sorted(data, key=lambda x: x["date"])
+            return sorted(data, key=lambda x: x["date"])
+
+        except Exception as e:
+            print(f"Error: {e}")
+            return []
 
 
 if __name__ == "__main__":
