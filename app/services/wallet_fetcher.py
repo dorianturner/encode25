@@ -5,7 +5,6 @@ import os
 import asyncio
 import aiohttp
 from itertools import islice
-from time import time
 
 def batched(iterable, n):
     """Batch data into tuples of length n. The last batch may be shorter."""
@@ -115,9 +114,6 @@ class WalletQuery:
                     price_data = await response.json()
                     return price_data["data"]
                 
-            start = time()
-            print("Started")
-
             async with aiohttp.ClientSession() as session:
                 tasks = [
                     get_price_by_addr(session, batch)
@@ -126,15 +122,7 @@ class WalletQuery:
 
                 price_datas = await asyncio.gather(*tasks)
 
-            print("\033[31mElaspsed time:", time() - start, "\033[0m")
-
             token_balances = []
-
-            # price_data = requests.post(
-            #     f"https://api.g.alchemy.com/prices/v1/{os.getenv('ALCHEMY')}/tokens/by-address",
-            #     json = payload,
-            #     headers = headers
-            # ).json()["data"]
 
             token_prices = dict()
             token_balances = []
@@ -144,10 +132,6 @@ class WalletQuery:
                     token_prices[token["address"]] = "NaN" if "error" in token else token["prices"][0]["value"]
                     token_prices[token["address"]] = 0 if float(token_prices[token["address"]]) > 65000 else token_prices[token["address"]] # hacky
 
-
-            # for token in price_data:
-            #     token_prices[token["address"]] = "NaN" if "error" in token else token["prices"][0]["value"]
-            #     token_prices[token["address"]] = 0 if float(token_prices[token["address"]]) > 65000 else token_prices[token["address"]] # hacky
 
             for token, metadata in zip(tokens, metadata_results):
                 token_address = token["contractAddress"]
@@ -180,7 +164,7 @@ class WalletQuery:
                     token_balances, key=lambda x: float(x[-1]), reverse=True
                 )
 
-            return json.dumps(response, indent=2)
+            return response
 
         elif len(self.wallet_address) == 66:
             # Fetch transaction details for a transaction hash
